@@ -10,6 +10,9 @@
     "python.analysis.extraPaths": [
         "${workspaceFolder}/src"
     ],
+    "python.analysis.exclude": [
+        "**/Interactive*.py"
+    ],
 	"python.analysis.reportExtraTelemetry": true,
 	"folders": [
 		{
@@ -20,6 +23,7 @@
         "python.testing.pytestEnabled": true,
         "cSpell.words": [
             "LICEN"
-        ]
+        ],
+        "pythonTestExplorer.testFramework": "pytest"
     }
 }

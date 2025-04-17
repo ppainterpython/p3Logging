@@ -151,6 +151,50 @@ def test_get_logger_info_one_line_STDOUT_LOG_CONFIG_FILE():
 # ---------------------------------------------------------------------------- +
 #endregion Tests for p3LogConfig.get_Logger_root_config_info() function
 # ---------------------------------------------------------------------------- +
+#region Tests for quick_logging_test() function
+# ---------------------------------------------------------------------------- +
+#region test_quick_logging_test_STDERR_JSON_FILE_LOG_CONFIG_FILE() function
+def test_quick_logging_test_STDERR_JSON_FILE_LOG_CONFIG_FILE(caplog):
+    with caplog.at_level(logging.DEBUG):
+        config_file = p3l.STDERR_JSON_FILE_LOG_CONFIG_FILE
+        p3l.quick_logging_test(THIS_APP_NAME,config_file)
+    assert "warning message" in caplog.text, \
+        "Expected 'warning message' in log output"
+    assert "debug message" in caplog.text, \
+        "Expected 'debug message' in log output"
+    assert "info message" in caplog.text, \
+        "Expected 'info message' in log output"
+    assert "error message" in caplog.text, \
+        "Expected 'error message' in log output"
+    assert "critical message" in caplog.text, \
+        "Expected 'critical message' in log output"
+    assert "division by zero" in caplog.text, \
+        "Expected 'division by zero' in log output"
+    assert len(caplog.records) == 6
+#endregion test_quick_logging_test_STDERR_JSON_FILE_LOG_CONFIG_FILE() function
+# ---------------------------------------------------------------------------- +
+#region test_quick_logging_test_STDOUT_LOG_CONFIG_FILE() function
+def test_quick_logging_test_STDOUT_LOG_CONFIG_FILE(caplog):
+    with caplog.at_level(logging.DEBUG):
+        config_file = p3l.STDOUT_LOG_CONFIG_FILE
+        p3l.quick_logging_test(THIS_APP_NAME,config_file)
+    assert "warning message" in caplog.text, \
+        "Expected 'warning message' in log output"
+    assert "debug message" in caplog.text, \
+        "Expected 'debug message' in log output"
+    assert "info message" in caplog.text, \
+        "Expected 'info message' in log output"
+    assert "error message" in caplog.text, \
+        "Expected 'error message' in log output"
+    assert "critical message" in caplog.text, \
+        "Expected 'critical message' in log output"
+    assert "division by zero" in caplog.text, \
+        "Expected 'division by zero' in log output"
+    assert len(caplog.records) == 6
+#endregion test_quick_logging_test_test_quick_logging_test_STDOUT_LOG_CONFIG_FILESTDERR_JSON_FILE_LOG_CONFIG_FILE() function
+# ---------------------------------------------------------------------------- +
+#endregion Tests for quick_logging_test() function
+# ---------------------------------------------------------------------------- +
 if __name__ == "__main__":
     try:
         test_get_logger_info_one_line_STDOUT_LOG_CONFIG_FILE()

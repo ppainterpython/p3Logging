@@ -22,24 +22,45 @@ from .p3LogConfig import *
 #endregion module imports
 # ---------------------------------------------------------------------------- +
 #region quick_logging_test() function
-def quick_logging_test(app_name:str,log_config_file:str) -> None:
-    """Quick correctness test of the current logging setup."""
+def quick_logging_test(app_name:str,log_config_file:str) -> bool:
+    """Quick correctness test of the current logging setup.
+    
+    Args:
+        app_name (str): The name of the application.
+        log_config_file (str): The path to the logging configuration file.
+        
+    Returns:
+        bool: True if the test was successful, False otherwise.
+    """
 
     pfx = fpfx(quick_logging_test)
     try:
+        if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
+            print(f"{pfx}app_name is required, cannot be '{str(app_name)}'")
+            return False
+        if (log_config_file is None or 
+            not isinstance(log_config_file, str) or 
+            len(log_config_file) == 0):
+            print(f"{pfx}log_config_file is required, "
+                  f"cannot be '{str(log_config_file)}'")
+            return False
+        ancf = f"{app_name}({log_config_file})"
         # Initialize the logger from a logging configuration file.
         setup_logging(log_config_file)
-        logger = logging.getLogger(app_name)
+        logger = logging.getLogger(ancf)
+        ancf = f"[{ancf}]"
         # Log messages at different levels
-        logger.debug("This is a debug message")
-        logger.info("This is an info message")
-        logger.warning("This is a warning message")
-        logger.error("This is an error message")
-        logger.critical("This is a critical message")
+        logger.debug(f"{pfx}Message 1/6 - debug message {ancf}")
+        logger.info(f"{pfx}Message 2/6 - info message {ancf}")
+        logger.warning(f"{pfx}Message 3/6 - warning message {ancf}")
+        logger.error(f"{pfx}Message 4/6 - error message {ancf}")
+        logger.critical(f"{pfx}Message 5/6 - critical message {ancf}")
         try:
             1 / 0
         except ZeroDivisionError as e:
-            logger.exception(f"Exception message: {str(e)}")
+            logger.exception(f"{pfx}Message 6/6 - Exception message: "
+                             f"{str(e)} {ancf}")
+        return True
     except Exception as e:
         log_exc(quick_logging_test, e, print=True)
         raise

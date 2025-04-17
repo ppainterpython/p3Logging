@@ -30,6 +30,12 @@ def get_config_path() -> dict:
     return _log_config_path
 #endregion get_config_path() function
 # ---------------------------------------------------------------------------- +
+#region get_file_handler_property() function
+def get_file_handler_property(handler_name:str, property_name:str) -> str:
+    """Get the value of a property from a file handler."""
+    ...
+#endregion get_file_handler_property()
+# ---------------------------------------------------------------------------- +
 #region retain_pytest_handlers
 def retain_pytest_handlers(f):
     """
