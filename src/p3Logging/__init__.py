@@ -1,4 +1,6 @@
 """ P3 Logging Module - simple add-on features to Python's logging module. """
+__version__ = "0.1.0"
+__author__ = "Paul Painter"
 
 from .p3LogConstants import *
 from .p3LogUtils import *

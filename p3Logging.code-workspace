@@ -17,6 +17,9 @@
 		}
     ],
     "settings": {
-        "python.testing.pytestEnabled": true
+        "python.testing.pytestEnabled": true,
+        "cSpell.words": [
+            "LICEN"
+        ]
     }
 }
