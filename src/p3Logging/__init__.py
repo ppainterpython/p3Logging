@@ -1,4 +1,5 @@
 """ P3 Logging Module - simple add-on features to Python's logging module. """
+
 from .p3LogConstants import *
 from .p3LogUtils import *
 from .p3LogConfig import *

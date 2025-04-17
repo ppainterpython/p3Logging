@@ -1,0 +1,72 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Py: File",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "justMyCode": false,  // Allows stepping into third-party or library code
+            "env": {
+                "PYTHONPATH": "${workspaceFolder};${workspaceFolder}/src"
+            }
+        },
+        {
+            "name": "Py: Package Directory",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",  // Set the working directory to the 'src' folder
+            // "env": {
+            //     "PYTHONPATH": "${workspaceFolder}/src"  // Ensure 'src' is in the Python path
+            // },
+            "justMyCode": false  // Allows stepping into third-party or library code
+        },
+        {
+            "name": "debugpy: Wrapper",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",  // Path to your wrapper script
+            "console": "integratedTerminal",
+            "justMyCode": false  // Allows stepping into third-party or library code
+        },
+        {
+            "name": "PyTest: Debug",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/tests",  // Path to your wrapper script
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",  // Current working directory
+            // "env": {
+            //     "PYTHONPATH": "${workspaceFolder}/src"
+            // },
+            "purpose": ["debug-test"]  // Arguments to pass to the script
+            //"justMyCode": false  // Allows stepping into third-party or library code
+        },
+        {
+            "name": "Py: Run as Module",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "p3Logging.p3LogInfo",  // Specify the module to run
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/src",  // Set the working directory to 'src'
+            // "env": {
+            //     "PYTHONPATH": "${workspaceFolder}/src"
+            // }
+            "justMyCode": false
+        }
+        // ,{
+        //     "name": "PyTest: Debug justMyCode",
+        //     "type": "debugpy",
+        //     "request": "launch",
+        //     "program": "${file}",  // Path to your wrapper script
+        //     "purpose": ["debug-test"],  // Arguments to pass to the script
+        //     "justMyCode": true  // Allows stepping into third-party or library code
+        // }
+    ]
+}
