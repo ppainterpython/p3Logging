@@ -4,6 +4,7 @@
 #region imports
 # python standard libraries
 import logging, pytest
+from pathlib import Path
 
 # third-party libraries
 import inspect, pyjson5
@@ -163,4 +164,101 @@ def test_log_flags_exceptions():
 #endregion test_log_flags_exceptions() function
 # ---------------------------------------------------------------------------- +
 #endregion Tests for Log Flags functions
+# ---------------------------------------------------------------------------- +
+#endregion Tests for Log Flags functions
+# ---------------------------------------------------------------------------- +
+#region Tests for p3LogConfig.is_config_file_reachable() function
+# ---------------------------------------------------------------------------- +
+#region test_setup_logging_with_FileHandler_filenames_input() function
+_BUILTIN_CONFIG_FILE_TEST_CASES = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, Path|None),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, Path|None),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, Path|None),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, Path|None)
+]
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_CONFIG_FILE_TEST_CASES)
+def test_is_config_file_reachable(test_input, expected):
+    """ Test the p3Logging builtin log config files are reachable. """
+
+    # Test the filename only input case
+    assert isinstance((test_path := p3l.is_config_file_reachable(test_input)), 
+                      (Path, type(None))), \
+        f"Expected is_config_file_reachable({str(test_input)}) to return Path|None, " \
+        f"but got {type(test_path)}"
+    assert test_path.name == test_input, \
+        f"Expected is_config_file_reachable({str(test_input)}) to return {test_input}, " \
+        f"but got {test_path.name}"
+    # Test absolute path case
+    assert isinstance((abs_path := test_path.absolute()), Path), \
+        f"Expected is_config_file_reachable({str(test_input)}) to return Path, " \
+        f"but got {type(abs_path)}"
+    assert abs_path.exists(), \
+        f"Expected Path: '{abs_path.absolute()}' to exist."
+    assert isinstance((test_path2 := p3l.is_config_file_reachable(str(abs_path))), 
+                      (Path, type(None))), \
+        f"Expected is_config_file_reachable({str(test_path2)}) to return Path|None, " \
+        f"but got {type(test_path2)}"
+    assert test_path2.name == test_path.name, \
+        f"Expected is_config_file_reachable({str(test_path2)}) to return {test_path.name}, " \
+        f"but got {test_path2.name}"
+    # Test the relative path case
+    # cwd = Path.cwd()
+    # rel_path = cwd / "src/p3Logging/p3logging_configs" / test_input
+    rel_path = "src/p3Logging/p3logging_configs/" + test_input
+    assert isinstance((test_path2 := p3l.is_config_file_reachable(str(rel_path))), 
+                      (Path, type(None))), \
+        f"Expected is_config_file_reachable({str(test_path2)}) to return Path|None, " \
+        f"but got {type(test_path2)}"
+    assert test_path2.name == test_path.name, \
+        f"Expected is_config_file_reachable({str(test_path2)}) to return {test_path.name}, " \
+        f"but got {test_path2.name}"
+
+        
+#endregion test_setup_logging_with_FileHandler_filenames_input() function
+# ---------------------------------------------------------------------------- +
+#region test_is_config_file_reachable_exceptions() function
+def test_is_config_file_reachable_exceptions():
+    """ Test the exception handling. """
+    # Test non-existent path_name path case
+    assert p3l.is_config_file_reachable("non_existent_path") is None, \
+        "Expected is_config_file_reachable('non_existent_path') to return None"
+    assert p3l.is_config_file_reachable("/path/to/nowhere") is None, \
+        "Expected is_config_file_reachable('/path/to/nowhere') to return None"
+    # Get test_path to work with later
+    test_path_name = p3l.STDOUT_LOG_CONFIG_FILE
+    assert isinstance((test_path := p3l.is_config_file_reachable(test_path_name)), 
+                      (Path, type(None))), \
+        f"Expected is_config_file_reachable({str(test_path_name)}) to return Path|None, " \
+        f"but got {type(test_path)}"
+    # Test path_name = None case
+    with pytest.raises(TypeError) as excinfo:
+        p3l.is_config_file_reachable(None)
+    expected_msg = "Invalid path_name: type:'<class 'NoneType'>' value = 'None'"
+    assert str(excinfo.value) == expected_msg, \
+        f"Expected TypeError with message '{expected_msg}', " \
+        f"but got '{str(excinfo.value)}'"
+    # Test path_name = "" case
+    with pytest.raises(TypeError) as excinfo:
+        p3l.is_config_file_reachable("")
+    expected_msg = "Invalid path_name: type:'<class 'str'>' value = ''"
+    assert str(excinfo.value) == expected_msg, \
+        f"Expected TypeError with message '{expected_msg}', " \
+        f"but got '{str(excinfo.value)}'"
+    # Test path_name = int case
+    with pytest.raises(TypeError) as excinfo:
+        p3l.is_config_file_reachable(123)
+    expected_msg = "Invalid path_name: type:'<class 'int'>' value = '123'"
+    assert str(excinfo.value) == expected_msg, \
+        f"Expected TypeError with message '{expected_msg}', " \
+            f"but got '{str(excinfo.value)}'"
+def test_is_config_file_reachable_input_None():
+    """ Test the input is None case. """
+    # Test path_name = None case
+    with pytest.raises(TypeError) as excinfo:
+        p3l.is_config_file_reachable(None)
+
+#endregion test_is_config_file_reachable_exceptions() function
+# ---------------------------------------------------------------------------- +
+#endregion Tests for p3LogConfig.setup_logging() function
 # ---------------------------------------------------------------------------- +

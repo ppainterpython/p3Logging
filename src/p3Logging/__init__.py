@@ -13,8 +13,8 @@ from .p3LogConstants import \
     LOG_FLAG_PRINT_CONFIG_ERRORS, \
     LOG_FLAG_SETUP_COMPLETE
 
-from .p3LogUtils import is_filename_only, is_path_reachable, \
-    append_cause, fpfx, log_exc
+from .p3LogUtils import is_filename_only,  \
+    append_cause, fpfx, exc_msg, force_exception
 
 from .p3LogConfig import get_configDict, get_config_path, \
     get_file_handler_property, \
@@ -22,7 +22,7 @@ from .p3LogConfig import get_configDict, get_config_path, \
     get_formatter_id_by_custom_class_name, quick_logging_test, \
     get_Logger_config_info, get_Logger_root_config_info, \
     get_logger_formatters, get_log_flag, set_log_flag, \
-    get_config_path, get_log_flags
+    get_config_path, get_log_flags, is_config_file_reachable
 
 from .p3LogFormatters import JSONOutputFormatter, ModuleOrClassFormatter
 
@@ -44,10 +44,11 @@ __all__ = [
     "FORCE_EXCEPTION",
     "FORCE_EXCEPTION_MSG",
     "is_filename_only",
-    "is_path_reachable",
+    "is_config_file_reachable",
     "append_cause",
     "fpfx",
-    "log_exc",
+    "exc_msg",
+    "force_exception",
     "get_configDict",
     "get_config_path",
     "get_file_handler_property",

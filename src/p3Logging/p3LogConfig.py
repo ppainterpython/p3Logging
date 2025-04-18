@@ -9,7 +9,7 @@ from typing import List
 import pyjson5
 # Local libraries
 from .p3LogConstants import *
-from .p3LogUtils import log_exc, fpfx, is_path_reachable, append_cause
+from .p3LogUtils import exc_msg, fpfx, append_cause
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
@@ -177,7 +177,7 @@ def validate_config_file(config_file:str) -> dict:
     me = fpfx(validate_config_file)
     global _log_config_path
     # Check if the config file exists, is accessible, and is valid JSON
-    if (config_file_path := is_path_reachable(config_file)) is None:
+    if (config_file_path := is_config_file_reachable(config_file)) is None:
         raise FileNotFoundError(f"Config file not found:'{config_file}'")
     try:
         # Read the config file and parse it as JSON
@@ -186,13 +186,13 @@ def validate_config_file(config_file:str) -> dict:
             config_json = pyjson5.decode_io(f_in)
             return config_json
     except TypeError as e:
-        log_exc(validate_config_file, e, print_flag=True)
+        exc_msg(validate_config_file, e, print_flag=True)
         t = type(config_file).__name__
         m = f"{me}Error accessing config_file: '{config_file}' as type: '{t}'"
         print(m)
         raise
     except Exception as e:
-        log_exc(validate_config_file, e, print_flag=True)
+        exc_msg(validate_config_file, e, print_flag=True)
         raise
 #endregion validate_config_file() function
 # ---------------------------------------------------------------------------- +
@@ -260,7 +260,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
             atexit.register(queue_handler.listener.stop)
         return log_config_dict
     except Exception as e:
-        log_exc(setup_logging, e, print_flag=True)
+        exc_msg(setup_logging, e, print_flag=True)
         raise 
 #endregion setup_logging function
 # ---------------------------------------------------------------------------- +
@@ -300,7 +300,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
             for handler_id, handler_config in handlers.items()
         }
     except Exception as e:
-        log_exc(update_FileHandler_filenames, e, print_flag=True)
+        exc_msg(update_FileHandler_filenames, e, print_flag=True)
         raise
 #endregion update_FileHanlder_filenams() function
 # ---------------------------------------------------------------------------- +#region start_queue() function
@@ -388,7 +388,7 @@ def quick_logging_test(app_name:str,log_config_file:str,
                              f"{str(e)} {ancf}")
         return True
     except Exception as e:
-        log_exc(quick_logging_test, e, print_flag=True)
+        exc_msg(quick_logging_test, e, print_flag=True)
         raise
 #endregion quick_logging_test()
 # ---------------------------------------------------------------------------- +#region get_logger_formatters() function
@@ -477,7 +477,7 @@ def get_Logger_config_info(log_configDict:dict|None = None,
         m += f"root config[{root_config_info}]" if root_config_info else ""
         return m
     except Exception as e:
-        m = log_exc(get_Logger_config_info, e, print_flag = True)
+        m = exc_msg(get_Logger_config_info, e, print_flag = True)
         raise
 #endregion get_Logger_config_info() function
 # ---------------------------------------------------------------------------- +
@@ -555,7 +555,7 @@ def get_Logger_root_config_info(root_log_configDict:dict|None = None) -> str:
         m += f"loggers({logger_count}){logger_ids} ]"
         return m
     except Exception as e:
-        m = log_exc(get_Logger_config_info, e, print_flag = True)
+        m = exc_msg(get_Logger_config_info, e, print_flag = True)
         raise
 #endregion get_Logger_root_config_info() function
 # ---------------------------------------------------------------------------- +
@@ -615,7 +615,60 @@ def get_logger_formatters(
                 formatters += get_logger_formatters(hl) if hl else None
         return formatters
     except Exception as e:
-        print(log_exc(get_logger_formatters, e, print_flag=True))
+        print(exc_msg(get_logger_formatters, e, print_flag=True))
         raise
 #endregion get_logger_formatters() function
+# ---------------------------------------------------------------------------- +
+#region is_config_file_reachable() function
+def is_config_file_reachable(path_name: str) -> Path | None:
+    """ Convert the path_name to a Path object and text for existence.
+    
+    Check if the path is reachable and exists. 3 cases are supported:
+    1. If the path is just a file name, check if it exists in the module folder. 
+       This case supports using built-in log config files in the package. 
+    2. If the path is absolute, check if it exists. This case allows callers to
+       specify an absolute path to a file or directory.
+    3. If the path is relative, check if it exists relative to CWD. This case
+       allows callers to specify a relative path to another project folder.
+    
+    Args:
+        path_name (str): The path str to check. Must be a string valid for use
+        in a path.
+        
+    Returns:
+        Path | None: Returns a Path object if the path exists, otherwise None.
+        
+    Raises:
+        TypeError: Raises a TypeError if the path_name is not a string.
+        ValueError: Raises a ValueError if the path_name is empty or not usable
+        in a path.
+        Exception: Forwards exceptions caught from the pathlib methods.
+    """
+    try:
+        me = fpfx(is_config_file_reachable)
+        # Check if the path is a viable str usable in a path.
+        if path_name is None or not isinstance(path_name, str) or len(path_name) == 0:
+            raise TypeError(f"Invalid path_name: type:'{type(path_name)}' value = '{path_name}'")
+
+        # Step 2: Check if the path is absolute
+        path = Path(path_name)
+        if path.is_absolute() and path.exists():
+            return path
+
+        # Case 1: Check if the input is just a file name
+        module_folder = Path(__file__).parent / "p3logging_configs" / path_name
+        if module_folder.exists():
+            return module_folder
+
+        # Step 3: Resolve as relative to the current working directory
+        relative_path = Path.cwd() / path_name
+        if relative_path.exists():
+            return relative_path
+
+        # If none of the checks succeed and no exception raised, return None
+        return None
+    except Exception as e:
+        exc_msg(is_config_file_reachable,e,print_flag=True)
+        raise
+#endregion is_config_file_reachable() function
 # ---------------------------------------------------------------------------- +

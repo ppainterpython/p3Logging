@@ -12,8 +12,8 @@ from .p3LogConstants import \
     FORCE_EXCEPTION, \
     FORCE_EXCEPTION_MSG
 
-from .p3LogUtils import is_filename_only, is_path_reachable, \
-    append_cause, fpfx, log_exc
+from .p3LogUtils import is_filename_only, is_config_file_reachable, \
+    append_cause, fpfx, exc_msg
 
 from .p3LogConfig import get_configDict, get_config_path, \
     get_file_handler_property, \
@@ -38,10 +38,10 @@ __all__ = [
     "FORCE_EXCEPTION",
     "FORCE_EXCEPTION_MSG",
     "is_filename_only",
-    "is_path_reachable",
+    "is_config_file_reachable",
     "append_cause",
     "fpfx",
-    "log_exc",
+    "exc_msg",
     "get_configDict",
     "get_config_path",
     "get_file_handler_property",
