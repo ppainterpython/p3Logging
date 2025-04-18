@@ -2,18 +2,73 @@
 """ P3 Logging Module - simple add-on features to Python's logging module. """
 #region imports
 # Python standard libraries
-import atexit, pathlib, logging, inspect, logging.config  
+import atexit, pathlib, logging, inspect, logging.config 
+from pathlib import Path
 from typing import List
 # Python third-party libraries
 import pyjson5
 # Local libraries
-import p3Logging
+from .p3LogConstants import *
+from .p3LogUtils import log_exc, fpfx, is_path_reachable, append_cause
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
 _log_config_dict = {}
 _log_config_path = None
+_log_flags = {
+        LOG_FLAG_PRINT_CONFIG_ERRORS: True,
+        LOG_FLAG_SETUP_COMPLETE: False
+}
 #endregion Globals
+# ---------------------------------------------------------------------------- +
+#region get_log_flags() function
+def get_log_flags() -> dict:
+    """Return the current log flags dictionary."""
+    global _log_flags
+    return _log_flags
+#endregion get_log_flags() function
+# ---------------------------------------------------------------------------- +
+#region get_log_flag() function
+def get_log_flag(flag_key:str) -> bool:
+    """Return the valid log flag value.
+    
+    Args:
+        flag_key (str): The key of the log flag to retrieve.
+
+    Returns:
+        bool: The value of the specified log flag.
+
+    Raises:
+        KeyError: If the flag_key is not found in the log flags dictionary.    
+        TypeError: If the flag_key is not a string.
+    """
+    global _log_flags
+    return _log_flags[flag_key]
+#endregion get_log_flags() function
+# ---------------------------------------------------------------------------- +
+#region set_log_flag() function
+def set_log_flag(flag_key:str,flag_value:bool=False) -> None:
+    """Set the valid log flag value.
+    
+    Args:
+        flag_key (str): The key of the log flag to set.
+        flag_value (bool): The value to set the log flag to.
+
+    Returns:
+        None: 
+
+    Raises:
+        KeyError: If the flag_key is not found in the log flags dictionary.    
+        TypeError: If the flag_key is not a string.
+    """
+    global _log_flags
+    if flag_key not in _log_flags:
+        raise KeyError(f"Invalid log flag key: '{flag_key}'")
+    if not isinstance(flag_value, bool):
+        raise TypeError(f"Invalid log flag value: '{flag_value}'")
+    _log_flags[flag_key] = flag_value
+    return None
+#endregion set_log_flags() function
 # ---------------------------------------------------------------------------- +
 #region get_configDict() function
 def get_configDict() -> dict:
@@ -131,13 +186,13 @@ def validate_config_file(config_file:str) -> dict:
             config_json = pyjson5.decode_io(f_in)
             return config_json
     except TypeError as e:
-        log_exc(validate_config_file, e, print=True)
+        log_exc(validate_config_file, e, print_flag=True)
         t = type(config_file).__name__
         m = f"{me}Error accessing config_file: '{config_file}' as type: '{t}'"
         print(m)
         raise
     except Exception as e:
-        log_exc(validate_config_file, e, print=True)
+        log_exc(validate_config_file, e, print_flag=True)
         raise
 #endregion validate_config_file() function
 # ---------------------------------------------------------------------------- +
@@ -203,7 +258,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         if start_queue and queue_handler is not None:
             queue_handler.listener.start()
             atexit.register(queue_handler.listener.stop)
-        return None
+        return log_config_dict
     except Exception as e:
         log_exc(setup_logging, e, print_flag=True)
         raise 
@@ -245,7 +300,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
             for handler_id, handler_config in handlers.items()
         }
     except Exception as e:
-        log_exc(update_FileHandler_filenames, e, print=True)
+        log_exc(update_FileHandler_filenames, e, print_flag=True)
         raise
 #endregion update_FileHanlder_filenams() function
 # ---------------------------------------------------------------------------- +#region start_queue() function
@@ -306,15 +361,15 @@ def quick_logging_test(app_name:str,log_config_file:str,
         if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
             print(f"{pfx}app_name is required, cannot be '{str(app_name)}'")
             return False
+        if log_config_file == FORCE_EXCEPTION:
+            # Support a testcase
+            raise Exception(FORCE_EXCEPTION_MSG)
         if (log_config_file is None or 
             not isinstance(log_config_file, str) or 
             len(log_config_file) == 0):
             print(f"{pfx}log_config_file is required, "
                   f"cannot be '{str(log_config_file)}'")
             return False
-        if log_config_file == p3l.FORCE_EXCEPTION:
-            # Support a testcase
-            raise Exception(p3l.FORCE_EXCEPTION_MSG)
         ancf = f"{app_name}({log_config_file})"
         # Initialize the logger from a logging configuration file.
         setup_logging(log_config_file,filenames=filenames)
@@ -333,7 +388,7 @@ def quick_logging_test(app_name:str,log_config_file:str,
                              f"{str(e)} {ancf}")
         return True
     except Exception as e:
-        log_exc(quick_logging_test, e, print=True)
+        log_exc(quick_logging_test, e, print_flag=True)
         raise
 #endregion quick_logging_test()
 # ---------------------------------------------------------------------------- +#region get_logger_formatters() function
@@ -560,7 +615,7 @@ def get_logger_formatters(
                 formatters += get_logger_formatters(hl) if hl else None
         return formatters
     except Exception as e:
-        print(log_exc(get_logger_formatters, e, print=True))
+        print(log_exc(get_logger_formatters, e, print_flag=True))
         raise
 #endregion get_logger_formatters() function
 # ---------------------------------------------------------------------------- +

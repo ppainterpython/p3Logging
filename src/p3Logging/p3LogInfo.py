@@ -16,11 +16,10 @@ from  dateutil import tz
 import pyjson5
 
 # Local Libraries
-import p3Logging as p3l
 # from ..p3Logging import p3LogConstants, p3LogConfig, p3LogUtils as p3l
-# from .p3LogConstants import *
-# from .p3LogUtils import log_exc, fpfx
-# from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name
+from .p3LogConstants import *
+from .p3LogUtils import log_exc, fpfx
+from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name
 #endregion module imports
 # ---------------------------------------------------------------------------- +
 #region get_QueueHandler_info() function
@@ -51,7 +50,7 @@ def get_QueueHandler_info(handler: logging.handlers.QueueHandler,
             ret += get_logger_handler_info(lhl, indent, showall)
         return ret
     except Exception as e:
-        print(log_exc(get_QueueHandler_info, e, print=True))
+        print(log_exc(get_QueueHandler_info, e, print_flag=True))
         raise
 #endregion get_QueueHandler_info() function
 # ---------------------------------------------------------------------------- +
@@ -73,7 +72,7 @@ def get_logger_filter_info(filters: List) -> List[logging.Filter]:
             ...
         return filters
     except Exception as e:
-        print(log_exc(get_logger_filter_info, e, print=True))
+        print(log_exc(get_logger_filter_info, e, print_flag=True))
         raise
 #endregion get_logger_filter_info() function
 # ---------------------------------------------------------------------------- +
@@ -153,7 +152,7 @@ def get_logger_handler_info(handler_param: List, indent: int = 0,
             ...
         return ret
     except Exception as e:
-        print(log_exc(get_logger_handler_info, e, print=True))
+        print(log_exc(get_logger_handler_info, e, print_flag=True))
         raise
 #endregion get_logger_handler_info() function
 # ---------------------------------------------------------------------------- +
@@ -244,7 +243,7 @@ def get_logger_info(logger: logging.Logger, indent:int=0,
             print(ret)
         return ret
     except Exception as e:
-        print(log_exc(get_logger_info, e, print=True))
+        print(log_exc(get_logger_info, e, print_flag=True))
         raise
 #endregion get_logger_info() function
 # ---------------------------------------------------------------------------- +
@@ -274,7 +273,7 @@ def show_logging_setup(config_file: str = STDOUT_LOG_CONFIG_FILE,
         if json:
             print(pyjson5.dumps(log_config_dict, indent=4))
     except Exception as e:
-        print(log_exc(show_logging_setup, e, print=True))
+        print(log_exc(show_logging_setup, e, print_flag=True))
         raise
 #endregion show_logging_setup() function
 # ---------------------------------------------------------------------------- +

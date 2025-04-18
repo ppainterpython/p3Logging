@@ -94,9 +94,73 @@ def test_quick_logging_test_with_FORCE_EXCEPTION(capsys):
     # Apply the logging configuration from p3l.FORCE_EXCEPTION
     with pytest.raises(Exception) as excinfo:
         p3l.quick_logging_test(THIS_APP_NAME, config_file)
-    assert p3l.FORCE_EXCEPTION_MSG in excinfo.value, \
+    assert p3l.FORCE_EXCEPTION_MSG in str(excinfo.value), \
         f"Expected Exception('{p3l.FORCE_EXCEPTION_MSG}')"
 #endregion test_quick_logging_test_with_FORCE_EXCEPTION() function
 # ---------------------------------------------------------------------------- +
 #endregion Tests for quick_logging_test() function
+# ---------------------------------------------------------------------------- +
+#region Tests for Log Flags functions
+# ---------------------------------------------------------------------------- +
+#region test_get_log_flags() function
+def test_log_flags():
+    # Test the log flags functions: get, set, etc.
+    assert p3l.setup_logging(p3l.STDOUT_LOG_CONFIG_FILE) is not None, \
+        str(f"Expected setup_logging({p3l.STDOUT_LOG_CONFIG_FILE}) " 
+        f"to return the log_config_dict")
+    assert (log_flags := p3l.get_log_flags()) is not None, \
+        f"Expected get_log_flags() to return a log flag dictionary."
+    assert isinstance(log_flags, dict), \
+        f"Expected get_log_flags() to return a dictionary."
+    assert p3l.LOG_FLAG_PRINT_CONFIG_ERRORS in log_flags, \
+        str(f"Expected get_log_flags() to have key: "
+            f"'{p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}' corresponding to "
+            f"constant 'p3l.LOG_FLAG_PRINT_CONFIG_ERRORS'")
+    assert p3l.LOG_FLAG_SETUP_COMPLETE in log_flags, \
+        str(f"Expected get_log_flags() to have key: "
+            f"'{p3l.LOG_FLAG_SETUP_COMPLETE}' corresponding to "
+            f"constant 'p3l.LOG_FLAG_SETUP_COMPLETE'")
+    assert isinstance((lfpce := log_flags[p3l.LOG_FLAG_PRINT_CONFIG_ERRORS]), bool), \
+        f"Expected get_log_flags() to return a boolean value for key: " \
+        f"'{p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}'"
+    assert isinstance((lfsc := log_flags[p3l.LOG_FLAG_SETUP_COMPLETE]), bool), \
+        f"Expected get_log_flags() to return a boolean value for key: " \
+        f"'{p3l.LOG_FLAG_SETUP_COMPLETE}'"
+    assert p3l.set_log_flag(p3l.LOG_FLAG_PRINT_CONFIG_ERRORS, not lfpce) is None, \
+        f"Expected set_log_flag({p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}, not lfpce) " \
+        f"to return None"
+    assert p3l.set_log_flag(p3l.LOG_FLAG_SETUP_COMPLETE, not lfsc) is None, \
+        f"Expected set_log_flag({p3l.LOG_FLAG_SETUP_COMPLETE}, not lfsc) " \
+        f"to return None"
+    assert bool(p3l.get_log_flag(p3l.LOG_FLAG_PRINT_CONFIG_ERRORS)) == (not bool(lfpce)), \
+        f"Expected get_log_flag({p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}) to return " \
+        f"{not bool(lfpce)}"
+    assert bool(p3l.get_log_flag(p3l.LOG_FLAG_PRINT_CONFIG_ERRORS)) == (not bool(lfpce)), \
+        f"Expected get_log_flag({p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}) to return " \
+        f"{not bool(lfpce)}"
+# ---------------------------------------------------------------------------- +
+#region test_log_flags_exceptions() function
+def test_log_flags_exceptions():    
+    assert p3l.set_log_flag(p3l.LOG_FLAG_PRINT_CONFIG_ERRORS, True) is None, \
+        f"Expected set_log_flag({p3l.LOG_FLAG_PRINT_CONFIG_ERRORS}, True) " \
+        f"to return None"
+    with pytest.raises(KeyError) as excinfo:
+        p3l.get_log_flag("invalid_flag")
+    assert "invalid_flag" in str(excinfo.value)
+    with pytest.raises(KeyError) as excinfo:
+        p3l.set_log_flag("invalid_flag", True)
+    assert "invalid_flag" in str(excinfo.value), \
+        f"Expected 'Invalid log flag key:' in KeyError message"
+    with pytest.raises(TypeError) as excinfo:
+        p3l.set_log_flag(p3l.LOG_FLAG_PRINT_CONFIG_ERRORS, "invalid_value")
+    assert "invalid_value" in str(excinfo.value), \
+        f"Expected 'invalid_value' in TypeError message"  
+    # Force an exception to be raised
+    with pytest.raises(Exception) as excinfo:
+        p3l.set_log_flag((1,2,3), "invalid_value")
+    assert "Invalid log flag key:" in str(excinfo.value), \
+        f"Expected 'Invalid log flag key:' in TypeError message"  
+#endregion test_log_flags_exceptions() function
+# ---------------------------------------------------------------------------- +
+#endregion Tests for Log Flags functions
 # ---------------------------------------------------------------------------- +

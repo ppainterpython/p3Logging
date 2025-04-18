@@ -5,7 +5,6 @@ These should be leaf level functions not dependent on any other p3l modules.
 """
 # Standard Module Libraries
 import logging
-from logging import Logger as logr
 from typing import Callable as function
 from pathlib import Path
 
