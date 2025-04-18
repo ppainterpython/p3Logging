@@ -5,6 +5,8 @@ This module contains custom logging formatters for the p3Logging package.
 '''
 # Attribution: Borrowed from James Murphy at mCoding LLC
 # https://github.com/mCodingLLC/VideosSampleCode.git
+#
+# TODO: Exception happening on rollover.  Need to investigate.
 # ---------------------------------------------------------------------------- +
 # Python Standard Libraries
 import atexit, pathlib, logging, inspect, logging.config  #, logging.handlers
@@ -157,7 +159,7 @@ class ModuleOrClassFormatter(logging.Formatter):
                 if key not in LOG_RECORD_BUILTIN_ATTRS:
                     message[key] = val
             strmsg = f"{message['timestamp']}:{message['level']}:"
-            strmsg += f"[{message['process']}:{message['thread']}]: "
+            strmsg += f"[{message['process']:06d}:{message['thread']:06d}]: "
             strmsg += f"{message['module']}.{message['function']}() "
             strmsg += f"{message['message']}"
             return strmsg

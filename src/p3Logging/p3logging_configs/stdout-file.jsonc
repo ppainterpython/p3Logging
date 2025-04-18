@@ -40,27 +40,18 @@
     },
     "handlers": {
         // stderr to console handler
-        "stderr": {
+        "stdout": {
             "class": "logging.StreamHandler",
             "level": "WARNING",
             "formatter": "module_or_class",
-            "stream": "ext://sys.stderr"
+            "stream": "ext://sys.stdout"
         },
         // file handler for logging to a file
         "file": {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "module_or_class",
-            "filename": "logs/ActivityTracker.log",
-            "maxBytes": 10000,
-            "backupCount": 2
-        },
-        // JSON file handler for logging to a JSON file
-        "json_file": {
-            "class": "logging.handlers.RotatingFileHandler",
-            "level": "DEBUG",
-            "formatter": "json",
-            "filename": "logs/ActivityTracker.jsonl",
+            "filename": "logs/p3LoggingDefault-file.log",
             "maxBytes": 10000,
             "backupCount": 2
         }
@@ -68,9 +59,8 @@
     "root": {
         "level": "DEBUG",
         "handlers": [
-            "stderr",
-            "file",
-            "json_file"
+            "stdout",
+            "file"
         ]
     }
 }

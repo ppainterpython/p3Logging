@@ -16,58 +16,15 @@ from  dateutil import tz
 import pyjson5
 
 # Local Libraries
-from .p3LogConstants import *
-from .p3LogUtils import *
-from .p3LogConfig import *
+import p3Logging as p3l
+# from ..p3Logging import p3LogConstants, p3LogConfig, p3LogUtils as p3l
+# from .p3LogConstants import *
+# from .p3LogUtils import log_exc, fpfx
+# from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name
 #endregion module imports
 # ---------------------------------------------------------------------------- +
-#region quick_logging_test() function
-def quick_logging_test(app_name:str,log_config_file:str) -> bool:
-    """Quick correctness test of the current logging setup.
-    
-    Args:
-        app_name (str): The name of the application.
-        log_config_file (str): The path to the logging configuration file.
-        
-    Returns:
-        bool: True if the test was successful, False otherwise.
-    """
-
-    pfx = fpfx(quick_logging_test)
-    try:
-        if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
-            print(f"{pfx}app_name is required, cannot be '{str(app_name)}'")
-            return False
-        if (log_config_file is None or 
-            not isinstance(log_config_file, str) or 
-            len(log_config_file) == 0):
-            print(f"{pfx}log_config_file is required, "
-                  f"cannot be '{str(log_config_file)}'")
-            return False
-        ancf = f"{app_name}({log_config_file})"
-        # Initialize the logger from a logging configuration file.
-        setup_logging(log_config_file)
-        logger = logging.getLogger(ancf)
-        ancf = f"[{ancf}]"
-        # Log messages at different levels
-        logger.debug(f"{pfx}Message 1/6 - debug message {ancf}")
-        logger.info(f"{pfx}Message 2/6 - info message {ancf}")
-        logger.warning(f"{pfx}Message 3/6 - warning message {ancf}")
-        logger.error(f"{pfx}Message 4/6 - error message {ancf}")
-        logger.critical(f"{pfx}Message 5/6 - critical message {ancf}")
-        try:
-            1 / 0
-        except ZeroDivisionError as e:
-            logger.exception(f"{pfx}Message 6/6 - Exception message: "
-                             f"{str(e)} {ancf}")
-        return True
-    except Exception as e:
-        log_exc(quick_logging_test, e, print=True)
-        raise
-#endregion quick_logging_test()
-# ---------------------------------------------------------------------------- +
-#region get_handler_info_QueueHandler() function
-def get_handler_info_QueueHandler(handler: logging.handlers.QueueHandler,
+#region get_QueueHandler_info() function
+def get_QueueHandler_info(handler: logging.handlers.QueueHandler,
                                   indent:int=0, showall:bool=True) -> str:
     """Create a summary of a logging.QueueHandler object."""
     if handler is None: return None
@@ -94,9 +51,9 @@ def get_handler_info_QueueHandler(handler: logging.handlers.QueueHandler,
             ret += get_logger_handler_info(lhl, indent, showall)
         return ret
     except Exception as e:
-        print(log_exc(get_handler_info_QueueHandler, e, print=True))
+        print(log_exc(get_QueueHandler_info, e, print=True))
         raise
-#endregion get_handler_info_QueueHandler() function
+#endregion get_QueueHandler_info() function
 # ---------------------------------------------------------------------------- +
 #region get_logger_filter_info() function
 def get_logger_filter_info(filters: List) -> List[logging.Filter]:
@@ -119,66 +76,6 @@ def get_logger_filter_info(filters: List) -> List[logging.Filter]:
         print(log_exc(get_logger_filter_info, e, print=True))
         raise
 #endregion get_logger_filter_info() function
-# ---------------------------------------------------------------------------- +
-#region get_logger_formatters() function
-def get_logger_formatters(
-    handler_param: logging.Handler | List[logging.Handler]) -> List[logging.Formatter]:
-    """Collect Formatter objs from an instance or List of logging.Handler objs.
-    
-    Args:
-        handler_param (logging.Handler | List[logging.Handler]): A single
-        instance or List of logging.Handler objects.
-        
-    Returns:
-        List[logging.Formatter]: A list of logging.Formatter objects.
-        
-    Raises:
-        TypeError: If the handler is not a logging.Handler or a list of 
-        logging.Handler objects.
-    """
-    me = fpfx(get_logger_formatters)
-    #region param 'handler_param' type check
-    raise_TypeError = False
-    # Must be a single instance, list or tuple of logging.Handler objects
-    # After validation, handlers will be a List of one or more logging.Handler
-    # objects.
-    if handler_param is None:raise_TypeError = True
-    elif isinstance(handler_param, logging.Handler): handlers = [handler_param]
-    elif ((isinstance(handler_param, List) or isinstance(handler_param, tuple)) 
-        and all(isinstance(obj, logging.Handler) for obj in handler_param)):
-        handlers = handler_param
-    else:
-        raise_TypeError = True
-    if raise_TypeError:
-        m = str(
-            f"param 'handler_param' is type:'{type(handler_param).__name__}', "
-            f"value is '{handler_param}', "
-            f"expected one or List of logging.Handler objects."
-        )
-        print(f"{me}{m}")
-        raise TypeError(m)
-    #endregion param 'handler_param' type check
-    try:
-        # Navigate the handlers to collect info on the configured formatters.
-        formatters = []
-        for handler in handlers:
-            if isinstance(handler, logging.StreamHandler):
-                formatter = handler.formatter
-                formatters.append(formatter) if formatter else None
-            elif isinstance(handler, logging.FileHandler):
-                formatter = handler.formatter
-                formatters.append(formatter) if formatter else None
-            # logging.handlers.QueueHandler
-            elif isinstance(handler, logging.handlers.QueueHandler):
-                # A listener has a list of handlers, collect them if present.
-                listener = handler.listener
-                hl = listener.handlers if listener else None
-                formatters += get_logger_formatters(hl) if hl else None
-        return formatters
-    except Exception as e:
-        print(log_exc(get_handler_info_QueueHandler, e, print=True))
-        raise
-#endregion get_logger_formatters() function
 # ---------------------------------------------------------------------------- +
 #region get_logger_handler_info() function
 def get_logger_handler_info(handler_param: List, indent: int = 0,
@@ -247,7 +144,7 @@ def get_logger_handler_info(handler_param: List, indent: int = 0,
             # logging.handlers.QueueHandler
             elif isinstance(handler, logging.handlers.QueueHandler):
                 ret = f"{indent}:" # new line
-                ret += get_handler_info_QueueHandler(handler, indent+4)
+                ret += get_QueueHandler_info(handler, indent+4)
             # Some other class based on logging.Handler
             else:
                 ret = f"{indent}:" # new line
@@ -381,13 +278,16 @@ def show_logging_setup(config_file: str = STDOUT_LOG_CONFIG_FILE,
         raise
 #endregion show_logging_setup() function
 # ---------------------------------------------------------------------------- +
+#region stand-alone __main_ test
 if __name__ == "__main__":
     try:
         # Apply the logging configuration from config_file
         setup_logging(STDOUT_LOG_CONFIG_FILE,start_queue=False)
-        m = get_Logger_config_info()
+        m = get_logger_info()
         print(m)
         # show_logging_setup()
     except Exception as e:
         print(str(e))
         exit(1)
+#endregion stand-alone __main_ test
+# ---------------------------------------------------------------------------- +

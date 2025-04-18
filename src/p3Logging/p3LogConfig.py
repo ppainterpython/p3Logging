@@ -1,15 +1,14 @@
 # ---------------------------------------------------------------------------- +
 """ P3 Logging Module - simple add-on features to Python's logging module. """
+#region imports
 # Python standard libraries
 import atexit, pathlib, logging, inspect, logging.config  
 from typing import List
 # Python third-party libraries
 import pyjson5
 # Local libraries
-from .p3LogConstants import *  
-from .p3LogUtils import *
-from .p3LogFormatters import JSONOutputFormatter, ModuleOrClassFormatter
-
+import p3Logging
+#endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
 _log_config_dict = {}
@@ -33,7 +32,8 @@ def get_config_path() -> dict:
 #region get_file_handler_property() function
 def get_file_handler_property(handler_name:str, property_name:str) -> str:
     """Get the value of a property from a file handler."""
-    ...
+    #TODO: get_file_handler_property() implementation
+    raise NotImplementedError("get_file_handler_property() not implemented")
 #endregion get_file_handler_property()
 # ---------------------------------------------------------------------------- +
 #region retain_pytest_handlers
@@ -143,7 +143,8 @@ def validate_config_file(config_file:str) -> dict:
 # ---------------------------------------------------------------------------- +
 #region setup_logging function
 def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
-                  start_queue:bool=True, validate_only:bool=False) -> dict|None:
+                  start_queue:bool=True, validate_only:bool=False,
+                  filenames: dict|None = None) -> dict|None:
     """ Process a configDict-style JSON file to validate and configure logging.
 
     A valid json file is required. When validate_only is True, the function
@@ -151,11 +152,20 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
     If False (default), the configDict is applied to the logging module.
     
     Args:
-        config_file (str): One of the builtin config file names, a relative path 
-        to cwd, or an absolute path to a JSON file.
-        start_queue (bool): If True, start the queue listener thread.
-        validate_only (bool): If True, only validate the config file and return 
-        the config_dict without applying it.
+        config_file (str): 
+            One of the builtin config file names, a relative path to cwd, 
+            or an absolute path to a JSON file.
+        start_queue (bool): 
+            If True, start the queue listener thread.
+        validate_only (bool): 
+            If True, only validate the config file and return the 
+            config_dict without applying it.
+        filenames (dict):
+            A dictionary of filename values by FileHandler Id keys. If
+            a FileHander with the given Id is found in the config file, 
+            use the corresponding filename value from the filenames 
+            dictionary, overriding the filename entry in the config.
+            Use value of None to apply the filename from the config file.
         
     Returns:
         dict|None: The logging configuration dictionary if validate_only is True, 
@@ -167,21 +177,28 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         ValueError: If the config file is not a valid logging configuration file.
     """
     try:
+        # Config File Preprocessing ------------------------------------------ +
         global _log_config_dict
-        valid_dictConfig = False
         # me = fpfx(setup_logging)
         # Validate/parse the json config_file to dict
         log_config_dict = validate_config_file(config_file)
         # For FileHandler types, validate the filenames included in the config
         valid_config_file:bool = validate_file_logging_config(log_config_dict)
+        # If filenames mapping dictionary provided, update the log_config_dict
+        if filenames is not None and isinstance(filenames, dict):
+            update_FileHandler_filenames(log_config_dict, filenames)
         # If validate_only is True, return the config_dict without applying it
         if valid_config_file and validate_only:
             return log_config_dict
+        # Config File Prrocessing -------------------------------------------- +
         # Apply the logging configuration preserving any pytest handlers
         wrap_config_dictConfig(log_config_dict)
-        _log_config_dict = log_config_dict
 
-        # If the queue_handler is used, start the listener thread
+        # Config File Postprocessing ----------------------------------------- +
+        # Save away the active logging config dict for later use
+        _log_config_dict = log_config_dict
+        # If a 'queue_handler' is used, start the listener thread
+        # TODO: loop through config for all QueueHandler instances?
         queue_handler = logging.getHandlerByName("queue_handler")
         if start_queue and queue_handler is not None:
             queue_handler.listener.start()
@@ -192,14 +209,52 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         raise 
 #endregion setup_logging function
 # ---------------------------------------------------------------------------- +
-#region start_queue() function
+#region update_FileHanlder_filenams() function
+def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:  
+    """Update the filenames in the config_dict for FileHandler instances.
+    
+    Apply a set of filename mapping values to any FileHandler instances 
+    in the provided confic_dict. The mapping is a dictionary of
+    FileHandler Id keys to filename values. The filename values are
+    used to update the filename property of the FileHandler instances
+    in the config_dict. The mapping is applied to the config_dict,
+    modified in place, so the caller can use the modified config_dict.
+    Validate the input parameters and raise errors if they are not valid.
+
+    """
+    try:
+        # Validate the inputs, harshly.
+        if (config_dict is None or not isinstance(config_dict, dict) 
+            or len(config_dict) == 0):
+            raise TypeError(f"Invalid config_dict: type: " 
+                            f"'{type(config_dict).__name__}' "
+                            f"value = '{str(config_dict)}'")
+        if (filenames is None or not isinstance(filenames, dict) 
+            or len(filenames) == 0):
+            raise TypeError(f"Invalid filenames: {type(filenames).__name__} "
+                            f"value = '{str(filenames)}'")
+        # Check if the config_dict has a 'handlers' element
+        handlers = config_dict.get("handlers", {})
+        if not isinstance(handlers, dict) or len(handlers) == 0: return None
+        # Update the handlers' filename values from the filenames mapping dict.
+        config_dict["handlers"] = {
+            handler_id: {
+                **handler_config,
+                "filename": filenames[handler_id]
+            } if handler_id in filenames and handler_config.get("class") == "logging.handlers.RotatingFileHandler" else handler_config
+            for handler_id, handler_config in handlers.items()
+        }
+    except Exception as e:
+        log_exc(update_FileHandler_filenames, e, print=True)
+        raise
+#endregion update_FileHanlder_filenams() function
+# ---------------------------------------------------------------------------- +#region start_queue() function
 def start_queue() -> None:
     # If the queue_handler is used, start the listener thread
     queue_handler = logging.getHandlerByName("queue_handler")
     if start_queue and queue_handler is not None:
         queue_handler.listener.start()
 #endregion start_queue()() function
-# ---------------------------------------------------------------------------- +
 #region stop_queue() function
 def stop_queue() -> None:
     # If the queue_handler is used, start the listener thread
@@ -233,6 +288,55 @@ def get_formatter_id_by_custom_class_name(formatter:logging.Formatter) -> str:
     return fmt_id_key
 #endregion get_formatter_reference_by_class() function
 # ---------------------------------------------------------------------------- +
+#region quick_logging_test() function
+def quick_logging_test(app_name:str,log_config_file:str,
+                       filenames: dict|None = None) -> bool:
+    """Quick correctness test of the current logging setup.
+    
+    Args:
+        app_name (str): The name of the application.
+        log_config_file (str): The path to the logging configuration file.
+        filenames (dict|None): A dictionary of filename values by FileHandler Id keys.
+        
+    Returns:
+        bool: True if the test was successful, False otherwise.
+    """
+    try:
+        pfx = f"{fpfx(quick_logging_test)} "
+        if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
+            print(f"{pfx}app_name is required, cannot be '{str(app_name)}'")
+            return False
+        if (log_config_file is None or 
+            not isinstance(log_config_file, str) or 
+            len(log_config_file) == 0):
+            print(f"{pfx}log_config_file is required, "
+                  f"cannot be '{str(log_config_file)}'")
+            return False
+        if log_config_file == p3l.FORCE_EXCEPTION:
+            # Support a testcase
+            raise Exception(p3l.FORCE_EXCEPTION_MSG)
+        ancf = f"{app_name}({log_config_file})"
+        # Initialize the logger from a logging configuration file.
+        setup_logging(log_config_file,filenames=filenames)
+        logger = logging.getLogger(ancf)
+        ancf = f"[{ancf}]"
+        # Log messages at different levels
+        logger.debug(f"Message 1/6 - debug message {ancf}")
+        logger.info(f"Message 2/6 - info message {ancf}")
+        logger.warning(f"Message 3/6 - warning message {ancf}")
+        logger.error(f"Message 4/6 - error message {ancf}")
+        logger.critical(f"Message 5/6 - critical message {ancf}")
+        try:
+            1 / 0
+        except ZeroDivisionError as e:
+            logger.exception(f"Message 6/6 - Exception message: "
+                             f"{str(e)} {ancf}")
+        return True
+    except Exception as e:
+        log_exc(quick_logging_test, e, print=True)
+        raise
+#endregion quick_logging_test()
+# ---------------------------------------------------------------------------- +#region get_logger_formatters() function
 #region get_Logger_config_info() function
 def get_Logger_config_info(log_configDict:dict|None = None, 
                            indent: int = 0) -> str:
@@ -399,4 +503,64 @@ def get_Logger_root_config_info(root_log_configDict:dict|None = None) -> str:
         m = log_exc(get_Logger_config_info, e, print_flag = True)
         raise
 #endregion get_Logger_root_config_info() function
+# ---------------------------------------------------------------------------- +
+#region get_logger_formatters() function
+def get_logger_formatters(
+    handler_param: logging.Handler | List[logging.Handler]) -> List[logging.Formatter]:
+    """Collect Formatter objs from an instance or List of logging.Handler objs.
+    
+    Args:
+        handler_param (logging.Handler | List[logging.Handler]): A single
+        instance or List of logging.Handler objects.
+        
+    Returns:
+        List[logging.Formatter]: A list of logging.Formatter objects.
+        
+    Raises:
+        TypeError: If the handler is not a logging.Handler or a list of 
+        logging.Handler objects.
+    """
+    me = fpfx(get_logger_formatters)
+    #region param 'handler_param' type check
+    raise_TypeError = False
+    # Must be a single instance, list or tuple of logging.Handler objects
+    # After validation, handlers will be a List of one or more logging.Handler
+    # objects.
+    if handler_param is None:raise_TypeError = True
+    elif isinstance(handler_param, logging.Handler): handlers = [handler_param]
+    elif ((isinstance(handler_param, List) or isinstance(handler_param, tuple)) 
+        and all(isinstance(obj, logging.Handler) for obj in handler_param)):
+        handlers = handler_param
+    else:
+        raise_TypeError = True
+    if raise_TypeError:
+        m = str(
+            f"param 'handler_param' is type:'{type(handler_param).__name__}', "
+            f"value is '{handler_param}', "
+            f"expected one or List of logging.Handler objects."
+        )
+        print(f"{me}{m}")
+        raise TypeError(m)
+    #endregion param 'handler_param' type check
+    try:
+        # Navigate the handlers to collect info on the configured formatters.
+        formatters = []
+        for handler in handlers:
+            if isinstance(handler, logging.StreamHandler):
+                formatter = handler.formatter
+                formatters.append(formatter) if formatter else None
+            elif isinstance(handler, logging.FileHandler):
+                formatter = handler.formatter
+                formatters.append(formatter) if formatter else None
+            # logging.handlers.QueueHandler
+            elif isinstance(handler, logging.handlers.QueueHandler):
+                # A listener has a list of handlers, collect them if present.
+                listener = handler.listener
+                hl = listener.handlers if listener else None
+                formatters += get_logger_formatters(hl) if hl else None
+        return formatters
+    except Exception as e:
+        print(log_exc(get_logger_formatters, e, print=True))
+        raise
+#endregion get_logger_formatters() function
 # ---------------------------------------------------------------------------- +
