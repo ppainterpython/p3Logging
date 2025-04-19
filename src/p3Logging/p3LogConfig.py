@@ -78,7 +78,7 @@ def get_configDict() -> dict:
 #endregion get_configDict() function
 # ---------------------------------------------------------------------------- +
 #region get_config_path() function
-def get_config_path() -> dict:
+def get_config_path() -> Path:
     """Return the current logging configuration file path."""
     global _log_config_path
     return _log_config_path
@@ -199,7 +199,7 @@ def validate_config_file(config_file:str) -> dict:
 #region setup_logging function
 def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
                   start_queue:bool=True, validate_only:bool=False,
-                  filenames: dict|None = None) -> dict|None:
+                  filenames: dict|None = None) -> dict:
     """ Process a configDict-style JSON file to validate and configure logging.
 
     A valid json file is required. When validate_only is True, the function
@@ -223,8 +223,9 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
             Use value of None to apply the filename from the config file.
         
     Returns:
-        dict|None: The logging configuration dictionary if validate_only is True, 
-        otherwise None.
+        dict: Returns the logging configuration dictionary. If validate_only 
+        is True, the log config is just validate, not actually applied. Failing
+        to return the config dict indicates an error occurred.
         
     Raises:
         FileNotFoundError: If the config file is not found or not accessible.
@@ -245,6 +246,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         # If validate_only is True, return the config_dict without applying it
         if valid_config_file and validate_only:
             return log_config_dict
+        
         # Config File Prrocessing -------------------------------------------- +
         # Apply the logging configuration preserving any pytest handlers
         wrap_config_dictConfig(log_config_dict)

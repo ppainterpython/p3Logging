@@ -23,6 +23,72 @@ logger.propagate = True
 # ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.setup_logging() function
 # ---------------------------------------------------------------------------- +
+#region test_setup_logging_for_builting_config_files() function
+_BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, dict),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, dict),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, dict),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, dict)
+]
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+def test_setup_logging_for_builting_config_files(caplog, test_input, expected) -> None:
+    """ Test the setup_logging() with each of the builtin logging config files. 
+    
+    Constants are defined to reference the builtin logging config files.
+    Test each one for a happy path completion to setup logging for each.
+    Clear the logging config after each test and include some logging calls
+    to validate.
+
+    Args:
+        test_input (str): The name of the logging config file.
+        expected (dict|None): The expected type of the return value.
+    """
+    # Test the builtin logging config files
+    assert isinstance((log_config_dict := p3l.setup_logging(test_input)), expected), \
+        f"Expected setup_logging({test_input}) to return type: '{expected}'"
+    assert (config_file_path := p3l.get_config_path()) is not None, \
+        f"Expected get_config_path() to return a Path object."
+    assert isinstance(config_file_path, Path), \
+        f"Expected Path object, but got {type(config_file_path)}"
+#endregion test_setup_logging_for_builting_config_files() function
+# ---------------------------------------------------------------------------- +
+#region test_setup_logging_for_bad_input_exceptions() function
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+def test_setup_logging_invalid_config_file_parameter(test_input,expected) -> None:
+    """ Test the setup_logging() with invalid config_file parameters. """
+    # Test with invalid config_file name
+    config_file = "invalid_config_file.jsonc"
+    with pytest.raises(FileNotFoundError) as excinfo:
+        p3l.setup_logging(config_file)
+    assert f"Config file not found:'{config_file}'" in str(excinfo.value), \
+        f"Expected setup_logging({config_file}) to return type: 'dict'"
+#endregion test_setup_logging_for_bad_input_exceptions() function
+# ---------------------------------------------------------------------------- +
+#region test_setup_logging_None_config_file_parameter() function
+def test_setup_logging_None_config_file_parameter() -> None:
+    """ Test the setup_logging() with None config_file parameters. """
+    # Test with invalid config_file input type None
+    config_file = None
+    with pytest.raises(TypeError) as excinfo:
+        p3l.setup_logging(config_file)
+    em = f"Invalid path_name: type:"
+    assert em in str(excinfo.value), \
+        f"Expected exception message to include: '{em}'"
+#endregion test_setup_logging_None_config_file_parameter() function
+# ---------------------------------------------------------------------------- +
+#region test_setup_validate_only() function
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+def test_setup_validate_only(test_input, expected) -> None:
+    """ Test the setup_logging() validate_only parameters. """
+    # Test with invalid config_file input type None
+    assert isinstance((log_config_dict := 
+                       p3l.setup_logging(test_input,validate_only=True)), expected), \
+        f"Expected setup_logging({test_input}) to return type: '{expected}'"
+#endregion test_setup_validate_only() function
+# ---------------------------------------------------------------------------- +
 #region test_setup_logging_with_FileHandler_filenames_input() function
 def test_setup_logging_with_FileHandler_filenames_input():
     # Initialize the logger from a logging configuration file.
@@ -48,11 +114,11 @@ _BUILTIN_CONFIG_TEST_CASES = [
     (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
 ]
 @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_TEST_CASES)
-def test_quick_logging_test_builtin_config_cases(caplog, test_input, expected):
+def test_quick_logging_test_builtin_config_cases(caplog, test_input, expected) -> None:
     with caplog.at_level(logging.DEBUG):
         config_file = p3l.STDOUT_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME,test_input) == expected, \
-            f"Expected quick_logging_test({test_input}) to return {expected}"
+    assert p3l.quick_logging_test(THIS_APP_NAME,test_input) == expected, \
+         f"Expected quick_logging_test({test_input}) to return {expected}"
     assert "warning message" in caplog.text, \
         "Expected 'warning message' in log output"
     assert "debug message" in caplog.text, \
@@ -169,7 +235,7 @@ def test_log_flags_exceptions():
 # ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.is_config_file_reachable() function
 # ---------------------------------------------------------------------------- +
-#region test_setup_logging_with_FileHandler_filenames_input() function
+#region test_is_config_file_reachable() function
 _BUILTIN_CONFIG_FILE_TEST_CASES = [
     (p3l.STDOUT_LOG_CONFIG_FILE, Path|None),
     (p3l.STDOUT_FILE_LOG_CONFIG_FILE, Path|None),
@@ -215,7 +281,7 @@ def test_is_config_file_reachable(test_input, expected):
         f"but got {test_path2.name}"
 
         
-#endregion test_setup_logging_with_FileHandler_filenames_input() function
+#endregion test_is_config_file_reachable() function
 # ---------------------------------------------------------------------------- +
 #region test_is_config_file_reachable_exceptions() function
 def test_is_config_file_reachable_exceptions():
