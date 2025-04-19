@@ -13,27 +13,31 @@ from .p3LogConstants import *
 
 # ---------------------------------------------------------------------------- +
 #region is_filename_only() function
-def is_filename_only(path_str:str = None) -> bool:
-    """
-    Check path_str as name of file only, no parent.
-    """
+def is_filename_only(path_str: str = None) -> bool:
+    """ Check path_str as name of file only, no parent. """
+    # Validate input
+    if path_str is None or not isinstance(path_str, str) or len(path_str.strip()) == 0:
+        raise TypeError(f"Invalid path_str: type='{type(path_str).__name__}', value='{path_str}'")
+    
     path = Path(path_str)
     # Check if the path has no parent folders    
     return path.parent == Path('.')
 #endregion is_filename_only() function
 # ---------------------------------------------------------------------------- +
 #region append_cause() function
-def append_cause(msg:str = None, e:Exception=None) -> str:
-    """
-    Append the cause of an exception to the message.
-    """
-    # If the exception has a cause, append it to the message
-    print(f"{str(e)} - > {str(e.__cause__)}")
-    if e:
-        if e.__cause__:
-            msg += append_cause(f" Exception: {str(e)}",e.__cause__) 
-        else:
-            msg += f" Exception: {str(e)}"
+def append_cause(msg:str = None, e:Exception=None, depth:int=0) -> str:
+    """ Append the cause chain of an exception to the message. """
+    # If the exception has a cause, append the chain up to depth
+    exc = e
+    msg = ""
+    t1 = t2 = True
+    while t1 or t2:
+        msg += f"Exception({depth}): {str(exc)}"
+        msg += f" >>> " if depth > 0 else ""
+        t1 = exc.__cause__ is not None and exc != exc.__cause__ 
+        t2 = exc.__context__ is not None and exc != exc.__context__
+        exc = exc.__cause__ or exc.__context__
+        depth -= 1 if depth > 0 else 0
     return msg 
 #endregion append_cause() function
 # ---------------------------------------------------------------------------- +
@@ -78,12 +82,15 @@ def exc_msg(func:function,e:Exception,
         str: Returns the routine exception log message.    
     """
     try:
-        if not func is None and isinstance(func, function):
+        if func is not None and isinstance(func, function):
+            # Helpling out the test cases only.
+            if func.__name__ == "force_exception":
+                force_exception(func)
             m = f"{fpfx(func)}{str(e)}"
             if print_flag: print(m)
             return m
         else:
-            m = f"exc_msg(): InvalidF func param:'{str(func)}'"
+            m = f"exc_msg(): Invalid func param:'{str(func)}'"
             if print_flag: print(m)
             return m
     except Exception as e:
