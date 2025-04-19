@@ -5,8 +5,8 @@ These should be leaf level functions not dependent on any other p3l modules.
 """
 # Standard Module Libraries
 import logging
-from typing import Callable as function
 from pathlib import Path
+from typing import Callable as function
 
 # Local Modules
 from .p3LogConstants import *  
@@ -62,41 +62,6 @@ def fpfx(func) -> str:
         print(f"fpfx() Error: {str(e)}")
         raise
 #endregion fpfx() function
-# ---------------------------------------------------------------------------- +
-#region exc_msg() function
-def exc_msg(func:function,e:Exception,
-            print_flag:bool=False) -> str:
-    """
-    Common simple output message for Exceptions.
-    
-    Within a function, use to emit a message in except: blocks. Various 
-    arguments select output by console print(), logger, or both.
-    
-    Args:
-        func (function): The function where the exception occurred.
-        e (Exception): The exception object.
-        print (bool): If True, print the message to console.
-        log (logging.Logger): Logger object to log the message.
-        
-    Returns:
-        str: Returns the routine exception log message.    
-    """
-    try:
-        if func is not None and isinstance(func, function):
-            # Helpling out the test cases only.
-            if func.__name__ == "force_exception":
-                force_exception(func)
-            m = f"{fpfx(func)}{str(e)}"
-            if print_flag: print(m)
-            return m
-        else:
-            m = f"exc_msg(): Invalid func param:'{str(func)}'"
-            if print_flag: print(m)
-            return m
-    except Exception as e:
-        print(f"p3LogUtils.exc_msg() Error: {str(e)}")
-        raise
-#endregion exc_msg() function
 # ---------------------------------------------------------------------------- +
 #region force_exception() function
 def force_exception(func, e:Exception=None) -> str:

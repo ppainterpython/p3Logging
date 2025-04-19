@@ -48,34 +48,6 @@ def test_is_filename_only():
 # ---------------------------------------------------------------------------- +
 #endregion Tests for is_filename_only() function
 # ---------------------------------------------------------------------------- +
-#region Tests for exc_msg() function
-# ---------------------------------------------------------------------------- +
-#region test_exc_msg() function
-def test_exc_msg():
-    # Test with a valid exception
-    try:
-        raise ValueError("Test exception")
-    except Exception as e:
-        result = p3l.exc_msg(test_exc_msg,e)
-        assert "Test exception" in result, \
-            f"Expected 'Test exception' in {result}"
-
-    # Test with invalid function 
-    result = p3l.exc_msg(None, None)
-    assert result == "exc_msg(): Invalid func param:'None'", \
-        f"Expected 'exc_msg(): Invalid func param:'None'' but got {result}"
-
-    # Test with a forced exception
-    e = ZeroDivisionError("testcase: test_exc_msg()")
-    with pytest.raises(ZeroDivisionError) as excinfo:
-        result = p3l.exc_msg(p3l.force_exception, "test_exc_msg():")
-    exp_msg = f"testcase: Default Exception Test for func:force_exception()"
-    assert exp_msg in str(excinfo.value), \
-        f"Expected Exception msg to be '{exp_msg}' but got '{str(excinfo.value)}'"
-#endregion test_exc_msg() function
-# ---------------------------------------------------------------------------- +
-#endregion Tests for exc_msg() function
-# ---------------------------------------------------------------------------- +
 #region Tests for fpfx() function
 # ---------------------------------------------------------------------------- +
 #region test_fpfx() function

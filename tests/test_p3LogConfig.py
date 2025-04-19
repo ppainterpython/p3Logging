@@ -21,6 +21,33 @@ logger = logging.getLogger(THIS_APP_NAME)
 logger.propagate = True
 #endregion Globals
 # ---------------------------------------------------------------------------- +
+#region Tests for validate_config_file() function
+# ---------------------------------------------------------------------------- +
+#region test_validate_config_file_exceptions() function
+def test_validate_config_file_exceptions():
+    """ Test the validate_config_file() function with invalid input. """
+    # Test with invalid config_file name
+    config_file = "test_configs/foo_invalid_config_file.jsonc"
+    with pytest.raises(FileNotFoundError) as excinfo:
+        p3l.validate_config_file(config_file)
+    assert f"Config file not found:'{config_file}'" in str(excinfo.value), \
+        f"Expected validate_config_file({config_file}) to raise FileNotFoundError"
+    # Test with invalid config_file input type None
+    config_file = None
+    with pytest.raises(TypeError) as excinfo:
+        p3l.validate_config_file(config_file)
+    em = f"Invalid path_name: type:'<class 'NoneType'>' value = 'None'"
+    assert em in str(excinfo.value), \
+        f"Expected exception message to include: '{em}'"
+    # Test with config file containing invalid JSON text
+    config_file = "tests/test_configs/invalid-json.jsonc"
+    with pytest.raises(pyjson5.Json5IllegalCharacter) as excinfo:
+        p3l.validate_config_file(config_file)
+#endregion test_validate_config_file_exceptions() function
+# ---------------------------------------------------------------------------- +
+# ---------------------------------------------------------------------------- +
+#endregion Tests for validate_config_file() function
+# ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.setup_logging() function
 # ---------------------------------------------------------------------------- +
 #region test_setup_logging_for_builting_config_files() function
@@ -327,4 +354,33 @@ def test_is_config_file_reachable_input_None():
 #endregion test_is_config_file_reachable_exceptions() function
 # ---------------------------------------------------------------------------- +
 #endregion Tests for p3LogConfig.setup_logging() function
+# ---------------------------------------------------------------------------- +
+#region Tests for exc_msg() function
+# ---------------------------------------------------------------------------- +
+#region test_exc_msg() function
+def test_exc_msg():
+    # Test with a valid exception
+    try:
+        raise ValueError("Test exception")
+    except Exception as e:
+        result = p3l.exc_msg(test_exc_msg,e)
+        assert "Test exception" in result, \
+            f"Expected 'Test exception' in {result}"
+
+    # Test with invalid function 
+    result = p3l.exc_msg(None, None)
+    em = "Invalid func param:'None'"
+    assert em in result, \
+        f"Expected 'exc_msg(): Invalid func param:'None'' but got {result}"
+
+    # Test with a forced exception
+    e = ZeroDivisionError("testcase: test_exc_msg()")
+    with pytest.raises(ZeroDivisionError) as excinfo:
+        result = p3l.exc_msg(p3l.force_exception, "test_exc_msg():")
+    exp_msg = f"testcase: Default Exception Test for func:force_exception()"
+    assert exp_msg in str(excinfo.value), \
+        f"Expected Exception msg to be '{exp_msg}' but got '{str(excinfo.value)}'"
+#endregion test_exc_msg() function
+# ---------------------------------------------------------------------------- +
+#endregion Tests for exc_msg() function
 # ---------------------------------------------------------------------------- +

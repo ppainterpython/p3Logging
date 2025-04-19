@@ -18,8 +18,8 @@ import pyjson5
 # Local Libraries
 # from ..p3Logging import p3LogConstants, p3LogConfig, p3LogUtils as p3l
 from .p3LogConstants import *
-from .p3LogUtils import exc_msg, fpfx
-from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name
+from .p3LogUtils import fpfx
+from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name, exc_msg
 #endregion module imports
 # ---------------------------------------------------------------------------- +
 #region get_QueueHandler_info() function

@@ -5,11 +5,12 @@
 import atexit, pathlib, logging, inspect, logging.config 
 from pathlib import Path
 from typing import List
+from typing import Callable as function
 # Python third-party libraries
 import pyjson5
 # Local libraries
 from .p3LogConstants import *
-from .p3LogUtils import exc_msg, fpfx, append_cause
+from .p3LogUtils import fpfx, append_cause, force_exception
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
@@ -174,7 +175,7 @@ def validate_config_file(config_file:str) -> dict:
     """
     Validate the file contains valid json, return it as a dictionary.
     """
-    me = fpfx(validate_config_file)
+    me = validate_config_file
     global _log_config_path
     # Check if the config file exists, is accessible, and is valid JSON
     if (config_file_path := is_config_file_reachable(config_file)) is None:
@@ -188,7 +189,7 @@ def validate_config_file(config_file:str) -> dict:
     except TypeError as e:
         exc_msg(validate_config_file, e, print_flag=True)
         t = type(config_file).__name__
-        m = f"{me}Error accessing config_file: '{config_file}' as type: '{t}'"
+        m = f"{fpfx(me)}Error accessing config_file: '{config_file}' as type: '{t}'"
         print(m)
         raise
     except Exception as e:
@@ -673,4 +674,40 @@ def is_config_file_reachable(path_name: str) -> Path | None:
         exc_msg(is_config_file_reachable,e,print_flag=True)
         raise
 #endregion is_config_file_reachable() function
+# ---------------------------------------------------------------------------- +
+#region exc_msg() function
+def exc_msg(func:function,e:Exception, print_flag:bool=False) -> str:
+    """
+    Common simple output message for Exceptions.
+    
+    Within a function, use to emit a message in except: blocks. Various 
+    arguments select output by console print(), logger, or both.
+    
+    Args:
+        func (function): The function where the exception occurred.
+        e (Exception): The exception object.
+        print (bool): If True, print the message to console.
+        log (logging.Logger): Logger object to log the message.
+        
+    Returns:
+        str: Returns the routine exception log message.    
+    """
+    try:
+        et = type(e).__name__
+        print_flag = get_log_flag(LOG_FLAG_PRINT_CONFIG_ERRORS)
+        if func is not None and isinstance(func, function):
+            # Helpling out the test cases only.
+            if func.__name__ == "force_exception":
+                force_exception(func)
+            m = f"{fpfx(func)} {et}({str(e)})"
+            if print_flag: print(m)
+            return m
+        else:
+            m = f"exc_msg(): Invalid func param:'{str(func)}'  {et}({str(e)})"
+            if print_flag: print(m)
+            return m
+    except Exception as e:
+        print(f"p3LogUtils.exc_msg() Error:  {et}({str(e)})")
+        raise
+#endregion exc_msg() function
 # ---------------------------------------------------------------------------- +

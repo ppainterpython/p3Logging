@@ -1,0 +1,43 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    this = "invalid" json
+    "formatters": {
+        // Basic formatter for logging messages to stderr
+        "module_function": {
+            "style": "{",
+            "format": "{asctime}.{msecs:03.0f}:{levelname}:[{process}:{thread}]MF: {module}.{funcName}() {message}",
+            "datefmt": "%Y-%m-%d %H:%M:%S"
+        },
+        // custom formatter to include class name in messages for when methods 
+        // make logging calls.
+        "module_or_class": {
+            "()": "p3Logging.p3LogFormatters.ModuleOrClassFormatter",
+            "fmt_keys": {
+                "timestamp": "timestamp",
+                "level": "levelname",
+                "module": "module",
+                "function": "funcName",
+                "message": "message",
+                "line": "lineno",
+                "thread_name": "threadName",
+                "logger": "name"
+            }
+        }
+    },
+    "handlers": {
+        // stdout to console handler
+        "stdout": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "module_function",
+            "stream": "ext://sys.stdout"
+        }
+    },
+    "root": {
+        "level": "DEBUG",
+        "handlers": [
+            "stdout"
+        ]
+    }
+}

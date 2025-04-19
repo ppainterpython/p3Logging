@@ -14,15 +14,16 @@ from .p3LogConstants import \
     LOG_FLAG_SETUP_COMPLETE
 
 from .p3LogUtils import is_filename_only,  \
-    append_cause, fpfx, exc_msg, force_exception
+    append_cause, fpfx, force_exception
 
 from .p3LogConfig import get_configDict, get_config_path, \
-    get_file_handler_property, \
+    get_file_handler_property, exc_msg,  \
     setup_logging, update_FileHandler_filenames, start_queue, stop_queue, \
     get_formatter_id_by_custom_class_name, quick_logging_test, \
     get_Logger_config_info, get_Logger_root_config_info, \
     get_logger_formatters, get_log_flag, set_log_flag, \
-    get_config_path, get_log_flags, is_config_file_reachable
+    get_config_path, get_log_flags, is_config_file_reachable, \
+    validate_config_file
 
 from .p3LogFormatters import JSONOutputFormatter, ModuleOrClassFormatter
 
@@ -31,10 +32,16 @@ from .p3LogInfo import get_QueueHandler_info, get_logger_filter_info, \
     show_logging_setup
 
 __all__ = [
+    "get_QueueHandler_info",
+    "get_logger_filter_info", 
+    "get_logger_handler_info",
+    "get_logger_info",
+    "show_logging_setup",
     "get_log_flags",
     "get_log_flag",
     "set_log_flag",
     "get_config_path",
+    "validate_config_file",
     "STDOUT_LOG_CONFIG_FILE",
     "STDOUT_FILE_LOG_CONFIG_FILE",
     "STDERR_FILE_JSON_LOG_CONFIG_FILE",
@@ -43,6 +50,8 @@ __all__ = [
     "DEFAULT_LOG_FILE",
     "FORCE_EXCEPTION",
     "FORCE_EXCEPTION_MSG",
+    "LOG_FLAG_PRINT_CONFIG_ERRORS",
+    "LOG_FLAG_SETUP_COMPLETE",
     "is_filename_only",
     "is_config_file_reachable",
     "append_cause",
