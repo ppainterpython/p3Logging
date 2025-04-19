@@ -177,21 +177,18 @@ def validate_config_file(config_file:str) -> dict:
     """
     me = validate_config_file
     global _log_config_path
-    # Check if the config file exists, is accessible, and is valid JSON
-    if (config_file_path := is_config_file_reachable(config_file)) is None:
-        raise FileNotFoundError(f"Config file not found:'{config_file}'")
     try:
+        # For helping out the test cases only.
+        if config_file == "force_exception":
+            force_exception(validate_config_file)
+        # Check if the config file exists, is accessible, and is valid JSON
+        if (config_file_path := is_config_file_reachable(config_file)) is None:
+            raise FileNotFoundError(f"Config file not found:'{config_file}'")
         # Read the config file and parse it as JSON
         with open(config_file_path, "r") as f_in:
             _log_config_path = config_file_path
             config_json = pyjson5.decode_io(f_in)
             return config_json
-    except TypeError as e:
-        exc_msg(validate_config_file, e, print_flag=True)
-        t = type(config_file).__name__
-        m = f"{fpfx(me)}Error accessing config_file: '{config_file}' as type: '{t}'"
-        print(m)
-        raise
     except Exception as e:
         exc_msg(validate_config_file, e, print_flag=True)
         raise

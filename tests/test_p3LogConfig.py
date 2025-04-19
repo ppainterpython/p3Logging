@@ -16,6 +16,21 @@ import p3Logging as p3l
 #region Globals
 THIS_APP_NAME = "Test_p3Config"
 
+# For tests of builtin config files for functions returning a dictionary
+_BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, dict),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, dict),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, dict),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, dict)
+]
+# For tests of builtin config files for functions returning a bool
+_BUILTIN_CONFIG_TEST_CASES = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, True),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
+]
+
 root_logger = logging.getLogger()
 logger = logging.getLogger(THIS_APP_NAME)
 logger.propagate = True
@@ -45,18 +60,34 @@ def test_validate_config_file_exceptions():
         p3l.validate_config_file(config_file)
 #endregion test_validate_config_file_exceptions() function
 # ---------------------------------------------------------------------------- +
+#region test_validate_config_file_FORCED_EXCEPTION() function
+def test_validate_config_file_FORCED_EXCEPTION():
+    config_file: str = p3l.FORCE_EXCEPTION
+    # Apply the logging configuration from p3l.FORCE_EXCEPTION
+    with pytest.raises(Exception) as excinfo:
+        p3l.validate_config_file(config_file)
+    em = "testcase: Default Exception Test for func:validate_config_file()"
+    assert em in str(excinfo.value), \
+        f"Expected '{em}' in exception message, " \
+        f"but got '{str(excinfo.value)}'"
+#endregion test_validate_config_file_FORCED_EXCEPTION() function
 # ---------------------------------------------------------------------------- +
+#region test_validate_config_file_for_builtin_config_files() function
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+def test_validate_config_file_for_builtin_config_files(test_input, expected) -> None:
+    """ Test the validate_config_file() function with invalid input. """
+    # Test with invalid config_file name
+    config_file = test_input
+    assert isinstance((config_file_path := p3l.validate_config_file(config_file)), expected), \
+        f"Expected validate_config_file({config_file}) to return type: '{expected}'"
+    
+#endregion test_validate_config_file_for_builtin_config_files() function# ---------------------------------------------------------------------------- +
 #endregion Tests for validate_config_file() function
 # ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.setup_logging() function
 # ---------------------------------------------------------------------------- +
 #region test_setup_logging_for_builting_config_files() function
-_BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES = [
-    (p3l.STDOUT_LOG_CONFIG_FILE, dict),
-    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, dict),
-    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, dict),
-    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, dict)
-]
 @pytest.mark.parametrize("test_input,expected", 
                          _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
 def test_setup_logging_for_builting_config_files(caplog, test_input, expected) -> None:
@@ -81,9 +112,7 @@ def test_setup_logging_for_builting_config_files(caplog, test_input, expected) -
 #endregion test_setup_logging_for_builting_config_files() function
 # ---------------------------------------------------------------------------- +
 #region test_setup_logging_for_bad_input_exceptions() function
-@pytest.mark.parametrize("test_input,expected", 
-                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
-def test_setup_logging_invalid_config_file_parameter(test_input,expected) -> None:
+def test_setup_logging_invalid_config_file_parameter() -> None:
     """ Test the setup_logging() with invalid config_file parameters. """
     # Test with invalid config_file name
     config_file = "invalid_config_file.jsonc"
@@ -134,12 +163,6 @@ def test_setup_logging_with_FileHandler_filenames_input():
 #region Tests for quick_logging_test() function
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_builtin_config_cases() function
-_BUILTIN_CONFIG_TEST_CASES = [
-    (p3l.STDOUT_LOG_CONFIG_FILE, True),
-    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
-    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
-    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
-]
 @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_TEST_CASES)
 def test_quick_logging_test_builtin_config_cases(caplog, test_input, expected) -> None:
     with caplog.at_level(logging.DEBUG):
@@ -183,7 +206,7 @@ def test_quick_logging_test_with_STDOUT_ONLY(capsys):
 #endregion test_quick_logging_test_with_STDOUT_ONLY() function
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_with_FORCE_EXCEPTION() function
-def test_quick_logging_test_with_FORCE_EXCEPTION(capsys):
+def test_quick_logging_test_with_FORCE_EXCEPTION():
     config_file: str = p3l.FORCE_EXCEPTION
     # Apply the logging configuration from p3l.FORCE_EXCEPTION
     with pytest.raises(Exception) as excinfo:
