@@ -72,3 +72,58 @@ def force_exception(func, e:Exception=None) -> str:
     raise e
 #endregion fpfx() function
 # ---------------------------------------------------------------------------- +
+#region t_of() function
+def t_of(obj) -> str:
+    return f"type({type(obj).__name__})"
+#endregion t_of() function
+# ---------------------------------------------------------------------------- +
+#region v_of() function
+def v_of(obj) -> str:
+    return f"value = '{str(obj)}'"
+#endregion v_of() function
+# ---------------------------------------------------------------------------- +
+#region check_testcase() function
+def check_testcase(func, var : str, exc : str = "ZeroDivisionError") -> str:
+    """ Raise test case exception exc if var = p3l.FORCE_EXCEPTION. 
+    
+    Used in functions and methods to enable test cases to force an exception
+    to test exception handling.
+
+    Args:
+        func (function): The function calling for the check.
+        var (str): The variable to be checked as equal to prl.FORCE_EXCEPTION.
+        exc (str): The exception class name to be raised.
+
+    Returns:
+        str: A short string explaining why no exeption was raised.
+
+    Raises:
+        Exception: of the class name passed in the exc argument
+
+    """
+    # Validate input
+    if var is None or not isinstance(var, str) or len(var.strip()) == 0:
+        return F"param 'var' is not a non-empty string {v_of(var)}."
+    if var != FORCE_EXCEPTION:
+        return F"param 'var' is not equal to p3l.FORCE_EXCEPTION {v_of(var)}."
+    if exc is None or not isinstance(var, str) or len(var.strip()) == 0:
+        return F"param 'exc' is not a non-empty string {v_of(exc)}."
+    func_valid = True if func is not None and isinstance(func, function) else False
+    func_name = func.__name__ if func_valid else "unknownFunction"
+    try:
+        import builtins
+        try:
+            exc_class = getattr(builtins,exc)
+            if exc_class is None or not isinstance(exc_class, type):
+                return f"param 'exc' {v_of(exc)} is not a valid exception class name."
+            dm = f"testcase: {exc} Exception Test for func:{func_name}()"
+            te = exc_class(dm)
+            raise te
+        except AttributeError as e:
+            return f"param 'exc' {v_of(exc)} error retrieving from builtins: str{e}."
+    except Exception as e:
+        if e == te:
+            raise e
+        return f"Error creating {exc}(), msg = '{str(e)}'"
+#endregion check_testcase() function
+# ---------------------------------------------------------------------------- +

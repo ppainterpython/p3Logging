@@ -14,7 +14,7 @@ from .p3LogConstants import \
     LOG_FLAG_SETUP_COMPLETE
 
 from .p3LogUtils import is_filename_only,  \
-    append_cause, fpfx, force_exception
+    append_cause, fpfx, force_exception, t_of, v_of, check_testcase
 
 from .p3LogConfig import get_configDict, get_config_path, \
     get_file_handler_property, exc_msg,  \
@@ -32,6 +32,9 @@ from .p3LogInfo import get_QueueHandler_info, get_logger_filter_info, \
     show_logging_setup
 
 __all__ = [
+    "check_testcase",
+    "v_of",
+    "t_of",
     "get_QueueHandler_info",
     "get_logger_filter_info", 
     "get_logger_handler_info",

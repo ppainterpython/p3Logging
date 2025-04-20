@@ -10,7 +10,7 @@ from typing import Callable as function
 import pyjson5
 # Local libraries
 from .p3LogConstants import *
-from .p3LogUtils import fpfx, append_cause, force_exception
+from .p3LogUtils import fpfx, append_cause, force_exception, t_of, v_of, check_testcase
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
@@ -87,7 +87,7 @@ def set_log_flag(flag_key:str,flag_value:bool=False) -> None:
     if flag_key not in _log_flags:
         raise KeyError(f"Invalid log flag key: '{flag_key}'")
     if not isinstance(flag_value, bool):
-        raise TypeError(f"Invalid log flag value: '{flag_value}'")
+        raise TypeError(f"Invalid flag_value: '{flag_value}'")
     _log_flags[flag_key] = flag_value
     return None
 #endregion set_log_flags() function
@@ -382,18 +382,10 @@ def quick_logging_test(app_name:str,log_config_file:str,
     """
     try:
         pfx = f"{fpfx(quick_logging_test)} "
+        # Testcase helper
+        _ = check_testcase(quick_logging_test, app_name, "RuntimeError")
         if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
-            print(f"{pfx}app_name is required, cannot be '{str(app_name)}'")
-            return False
-        if log_config_file == FORCE_EXCEPTION:
-            # Support a testcase
-            raise Exception(FORCE_EXCEPTION_MSG)
-        if (log_config_file is None or 
-            not isinstance(log_config_file, str) or 
-            len(log_config_file) == 0):
-            print(f"{pfx}log_config_file is required, "
-                  f"cannot be '{str(log_config_file)}'")
-            return False
+            raise TypeError(f"Invalid app_name: {t_of(app_name)} {v_of(app_name)}")
         ancf = f"{app_name}({log_config_file})"
         # Initialize the logger from a logging configuration file.
         setup_logging(log_config_file,filenames=filenames)
