@@ -23,7 +23,7 @@ from .p3LogConfig import get_configDict, get_config_path, \
     get_Logger_config_info, get_Logger_root_config_info, \
     get_logger_formatters, get_log_flag, set_log_flag, \
     get_config_path, get_log_flags, is_config_file_reachable, \
-    validate_config_file
+    validate_config_file, validate_dictConfig
 
 from .p3LogFormatters import JSONOutputFormatter, ModuleOrClassFormatter
 
@@ -42,6 +42,7 @@ __all__ = [
     "set_log_flag",
     "get_config_path",
     "validate_config_file",
+    "validate_dictConfig",
     "STDOUT_LOG_CONFIG_FILE",
     "STDOUT_FILE_LOG_CONFIG_FILE",
     "STDERR_FILE_JSON_LOG_CONFIG_FILE",

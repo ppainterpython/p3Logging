@@ -14,6 +14,27 @@ from .p3LogUtils import fpfx, append_cause, force_exception
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
+_PYTHON_LOGGING_HANDLERS = (
+    "logging.StreamHandler",
+    "logging.FileHandler",
+    "logging.handlers.RotatingFileHandler",
+    "logging.handlers.TimedRotatingFileHandler",
+    "logging.handlers.QueueHandler",
+    "logging.handlers.QueueListener",
+    "logging.handlers.MemoryHandler",
+    "logging.handlers.SocketHandler",
+    "logging.handlers.DatagramHandler",
+    "logging.handlers.HTTPHandler",
+    "logging.handlers.SMTPHandler",
+    "logging.handlers.NTEventLogHandler",
+    "logging.handlers.SysLogHandler",
+)
+_SUPPORTED_LOGGING_HANDLER = (
+    "logging.FileHandler", 
+    "logging.TimedRotatingFileHandler",
+    "logging.handlers.RotatingFileHandler"
+)
+
 _log_config_dict = {}
 _log_config_path = None
 _log_flags = {
@@ -132,49 +153,52 @@ def wrap_config_dictConfig(log_config):
         raise RuntimeError(m) from e
 #endregion wrap_config_dictConfig() function
 # ---------------------------------------------------------------------------- +
-#region validate_file_logging_config() function
-def validate_file_logging_config(config_json:dict) -> bool:
-    """ Pre-validate the file log config for support and dictConfig() format. 
-    """
+#region validate_dictConfig) function
+def validate_dictConfig(config_dict : dict) -> bool:
+    """ Scan the config dict for support and dictConfig() format. """
     # Validate the JSON configuration
     try:
-        _ = pyjson5.encode(config_json) # validate json serializable, not output
-    except TypeError as e:
-        t = type(config_json).__name__
-        m = f"Error decoding config_json: '{config_json} as type: '{t}'"
-        raise RuntimeError(m) from e
-    except (pyjson5.JSONDecodeError, Exception) as e:
-        m = f"Error decoding config_json input"
-        raise RuntimeError(m) from e
-    # TODO: should support check for other p3Logging-supported handlers?
-    # Like QueueHandler, QueueListener, etc.
-    # Iterate supported file handlers, check log file access
-    file_handler_classes = ("logging.FileHandler", 
-                            "logging.TimedRotatingFileHandler",
-                            "logging.handlers.RotatingFileHandler")
-    for name, handler in config_json["handlers"].items():
-        if isinstance(handler, dict) and \
-            handler.get("class") in file_handler_classes:
-            # Check if the filename is valid
-            filename = handler.get("filename")
-            if filename:
-                file_path = pathlib.Path(filename)
-                # Ensure the directory exists
-                file_path.parent.mkdir(parents=True, exist_ok=True)
-                # Check if the file is writable
-                try:
-                    with open(file_path, "a"):
-                        pass
-                except IOError as e:
-                    raise RuntimeError(f"Cannot write to log file: {file_path}") from e
-    return True
-#endregion validate_file_logging_config() function
+        # Check if we are helping a testcase
+        if isinstance(config_dict, str) and config_dict == "force_exception":
+            force_exception(validate_dictConfig)
+        _ = pyjson5.encode(config_dict) # validate json serializable, not output
+        # TODO: should support check for other p3Logging-supported handlers?
+        # Like QueueHandler, QueueListener, etc.
+        # Iterate supported file handlers, check log file access
+        for name, handler in config_dict["handlers"].items():
+            # Look at p3Logging supported handlers only
+            if isinstance(handler, dict) and \
+                handler.get("class") in _SUPPORTED_LOGGING_HANDLER:
+                # Check if the filename is valid
+                filename = handler.get("filename")
+                if filename:
+                    # TODO: consider is_log_file_reachable() instead?
+                    file_path = pathlib.Path(filename)
+                    # Ensure the directory exists
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+                    # Check if the file is writable
+                    try:
+                        with open(file_path, "a"):
+                            pass
+                    except IOError as e:
+                        raise RuntimeError(
+                            f"Cannot write to log file: {file_path}") from e
+        return True
+    # except TypeError as e:
+    #     t = type(config_dict).__name__
+    #     m = f"Error decoding config_dict: '{config_dict} as type: '{t}'"
+    #     raise RuntimeError(m) from e
+    # except (pyjson5.JSONDecodeError, Exception) as e:
+    #     m = f"Error decoding config_dict input"
+    #     raise RuntimeError(m) from e
+    except Exception as e:
+        exc_msg(validate_config_file, e)
+        raise
+#endregion validate_dictConfig) function
 # ---------------------------------------------------------------------------- +
 #region validate_config_file() function
 def validate_config_file(config_file:str) -> dict:
-    """
-    Validate the file contains valid json, return it as a dictionary.
-    """
+    """ Validate the file contains valid json, return it as a dictionary. """
     me = validate_config_file
     global _log_config_path
     try:
@@ -190,7 +214,7 @@ def validate_config_file(config_file:str) -> dict:
             config_json = pyjson5.decode_io(f_in)
             return config_json
     except Exception as e:
-        exc_msg(validate_config_file, e, print_flag=True)
+        exc_msg(validate_config_file, e)
         raise
 #endregion validate_config_file() function
 # ---------------------------------------------------------------------------- +
@@ -237,7 +261,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         # Validate/parse the json config_file to dict
         log_config_dict = validate_config_file(config_file)
         # For FileHandler types, validate the filenames included in the config
-        valid_config_file:bool = validate_file_logging_config(log_config_dict)
+        valid_config_file:bool = validate_dictConfig(log_config_dict)
         # If filenames mapping dictionary provided, update the log_config_dict
         if filenames is not None and isinstance(filenames, dict):
             update_FileHandler_filenames(log_config_dict, filenames)

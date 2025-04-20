@@ -178,13 +178,13 @@ def test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE(caplog):
 #endregion test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE() function
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_cases() function
-_BUILTIN_CONFIG_TEST_CASES = [
+_BUILTIN_CONFIG_FILES_BOOL = [
     (p3l.STDOUT_LOG_CONFIG_FILE, True),
     (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
     (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
     (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
 ]
-@pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_TEST_CASES)
+@pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_BOOL)
 def test_quick_logging_test_cases(caplog, test_input, expected):
     with caplog.at_level(logging.DEBUG):
         config_file = p3l.STDOUT_LOG_CONFIG_FILE

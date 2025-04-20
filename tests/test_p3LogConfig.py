@@ -17,14 +17,14 @@ import p3Logging as p3l
 THIS_APP_NAME = "Test_p3Config"
 
 # For tests of builtin config files for functions returning a dictionary
-_BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES = [
+_BUILTIN_CONFIG_FILES_DICT = [
     (p3l.STDOUT_LOG_CONFIG_FILE, dict),
     (p3l.STDOUT_FILE_LOG_CONFIG_FILE, dict),
     (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, dict),
     (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, dict)
 ]
 # For tests of builtin config files for functions returning a bool
-_BUILTIN_CONFIG_TEST_CASES = [
+_BUILTIN_CONFIG_FILES_BOOL = [
     (p3l.STDOUT_LOG_CONFIG_FILE, True),
     (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
     (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
@@ -36,11 +36,49 @@ logger = logging.getLogger(THIS_APP_NAME)
 logger.propagate = True
 #endregion Globals
 # ---------------------------------------------------------------------------- +
+#region Tests for validate_dictConfig) function
+# ---------------------------------------------------------------------------- +
+#region test_validate_config_dict_for_builtin_config_files() function
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_CONFIG_FILES_BOOL)
+def test_validate_config_dict_for_builtin_config_files(test_input, expected) -> None:
+    # Test with the builtin config files, happy path
+    config_file = test_input
+    assert isinstance((dictConfig := p3l.validate_config_file(config_file)), dict), \
+        f"Expected validate_config_file({config_file}) to return type: 'dict'"
+    assert p3l.validate_dictConfig(dictConfig) == expected, \
+        f"Expected validate_dictConfig({config_file}) to return type: '{expected}'"
+#endregion test_validate_config_dict_for_builtin_config_files() function
+# ---------------------------------------------------------------------------- +
+#region test_validate_config_dict_FORCED_EXCEPTION() function
+def test_validate_config_dict_FORCED_EXCEPTION():
+    dictConfig: str = p3l.FORCE_EXCEPTION
+    # Apply the logging configuration from p3l.FORCE_EXCEPTION
+    with pytest.raises(Exception) as excinfo:
+        p3l.validate_dictConfig(dictConfig)
+    em = "testcase: Default Exception Test for func:validate_dictConfig()"
+    assert em in str(excinfo.value), \
+        f"Expected '{em}' in exception message, " \
+        f"but got '{str(excinfo.value)}'"
+#endretion test_validate_config_dict_FORCED_EXCEPTION() function
+# ---------------------------------------------------------------------------- +
+#endregion Tests for validate_dictConfig) function
+# ---------------------------------------------------------------------------- +
 #region Tests for validate_config_file() function
+# ---------------------------------------------------------------------------- +
+#region test_validate_config_file_for_builtin_config_files() function
+@pytest.mark.parametrize("test_input,expected", 
+                         _BUILTIN_CONFIG_FILES_DICT)
+def test_validate_config_file_for_builtin_config_files(test_input, expected) -> None:
+    # Test with the builtin config files, happy path
+    config_file = test_input
+    assert isinstance((p3l.validate_config_file(config_file)), expected), \
+        f"Expected validate_config_file({config_file}) to return type: '{expected}'"
+#endregion test_validate_dictConfig_for_builtin_config_files() function# ---------------------------------------------------------------------------- +
 # ---------------------------------------------------------------------------- +
 #region test_validate_config_file_exceptions() function
 def test_validate_config_file_exceptions():
-    """ Test the validate_config_file() function with invalid input. """
+    """ Test the validate_dictConfig() function with invalid input. """
     # Test with invalid config_file name
     config_file = "test_configs/foo_invalid_config_file.jsonc"
     with pytest.raises(FileNotFoundError) as excinfo:
@@ -66,30 +104,19 @@ def test_validate_config_file_FORCED_EXCEPTION():
     # Apply the logging configuration from p3l.FORCE_EXCEPTION
     with pytest.raises(Exception) as excinfo:
         p3l.validate_config_file(config_file)
-    em = "testcase: Default Exception Test for func:validate_config_file()"
+    em = "testcase: Default Exception Test for func:validate_dictConfig()"
     assert em in str(excinfo.value), \
         f"Expected '{em}' in exception message, " \
         f"but got '{str(excinfo.value)}'"
 #endregion test_validate_config_file_FORCED_EXCEPTION() function
 # ---------------------------------------------------------------------------- +
-#region test_validate_config_file_for_builtin_config_files() function
-@pytest.mark.parametrize("test_input,expected", 
-                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
-def test_validate_config_file_for_builtin_config_files(test_input, expected) -> None:
-    """ Test the validate_config_file() function with invalid input. """
-    # Test with invalid config_file name
-    config_file = test_input
-    assert isinstance((config_file_path := p3l.validate_config_file(config_file)), expected), \
-        f"Expected validate_config_file({config_file}) to return type: '{expected}'"
-    
-#endregion test_validate_config_file_for_builtin_config_files() function# ---------------------------------------------------------------------------- +
-#endregion Tests for validate_config_file() function
+#endregion Tests for validate_dictConfig() function
 # ---------------------------------------------------------------------------- +
-#region Tests for p3LogConfig.setup_logging() function
+#region Tests for setup_logging() function
 # ---------------------------------------------------------------------------- +
 #region test_setup_logging_for_builting_config_files() function
 @pytest.mark.parametrize("test_input,expected", 
-                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+                         _BUILTIN_CONFIG_FILES_DICT)
 def test_setup_logging_for_builting_config_files(caplog, test_input, expected) -> None:
     """ Test the setup_logging() with each of the builtin logging config files. 
     
@@ -111,7 +138,7 @@ def test_setup_logging_for_builting_config_files(caplog, test_input, expected) -
         f"Expected Path object, but got {type(config_file_path)}"
 #endregion test_setup_logging_for_builting_config_files() function
 # ---------------------------------------------------------------------------- +
-#region test_setup_logging_for_bad_input_exceptions() function
+#region test_setup_logging_invalid_config_file_parameter() function
 def test_setup_logging_invalid_config_file_parameter() -> None:
     """ Test the setup_logging() with invalid config_file parameters. """
     # Test with invalid config_file name
@@ -120,7 +147,7 @@ def test_setup_logging_invalid_config_file_parameter() -> None:
         p3l.setup_logging(config_file)
     assert f"Config file not found:'{config_file}'" in str(excinfo.value), \
         f"Expected setup_logging({config_file}) to return type: 'dict'"
-#endregion test_setup_logging_for_bad_input_exceptions() function
+#endregion test_setup_logging_invalid_config_file_parameter() function
 # ---------------------------------------------------------------------------- +
 #region test_setup_logging_None_config_file_parameter() function
 def test_setup_logging_None_config_file_parameter() -> None:
@@ -136,7 +163,7 @@ def test_setup_logging_None_config_file_parameter() -> None:
 # ---------------------------------------------------------------------------- +
 #region test_setup_validate_only() function
 @pytest.mark.parametrize("test_input,expected", 
-                         _BUILTIN_SETUP_LOGGING_CONFIG_FILE_TEST_CASES)
+                         _BUILTIN_CONFIG_FILES_DICT)
 def test_setup_validate_only(test_input, expected) -> None:
     """ Test the setup_logging() validate_only parameters. """
     # Test with invalid config_file input type None
@@ -158,12 +185,12 @@ def test_setup_logging_with_FileHandler_filenames_input():
         f"Expected quick_logging_test({config_file}) to return True"
 #endregion test_setup_logging_with_FileHandler_filenames_input() function
 # ---------------------------------------------------------------------------- +
-#endregion Tests for p3LogConfig.setup_logging() function
+#endregion Tests for setup_logging() function
 # ---------------------------------------------------------------------------- +
 #region Tests for quick_logging_test() function
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_builtin_config_cases() function
-@pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_TEST_CASES)
+@pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_BOOL)
 def test_quick_logging_test_builtin_config_cases(caplog, test_input, expected) -> None:
     with caplog.at_level(logging.DEBUG):
         config_file = p3l.STDOUT_LOG_CONFIG_FILE
