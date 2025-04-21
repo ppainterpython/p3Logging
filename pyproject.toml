@@ -1,5 +1,5 @@
 [project]
-name = "p3Logging"
+name = "p3logging"
 dynamic = ["version"]
 description = "A simple logging library for Python 3"
 readme = "README.md"
@@ -10,4 +10,4 @@ license-files = ["LICEN[CS]E*"]
 requires = ["setuptools>=78", "wheel"]
 build-backend = "setuptools.build_meta"
 [project.urls]
-Homepage = "https://github.com/ppainterpython/p3Logging"
+Homepage = "https://github.com/ppainterpython/p3logging"

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------- +
 '''
-p3LogFormatters.py - Logging formatters for the p3Logging package.
-This module contains custom logging formatters for the p3Logging package.
+p3LogFormatters.py - Logging formatters for the p3logging package.
+This module contains custom logging formatters for the p3logging package.
 '''
 # Attribution: Borrowed from James Murphy at mCoding LLC
 # https://github.com/mCodingLLC/VideosSampleCode.git

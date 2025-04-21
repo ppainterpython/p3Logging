@@ -162,11 +162,11 @@ def validate_dictConfig(config_dict : dict) -> bool:
         if isinstance(config_dict, str) and config_dict == "force_exception":
             force_exception(validate_dictConfig)
         _ = pyjson5.encode(config_dict) # validate json serializable, not output
-        # TODO: should support check for other p3Logging-supported handlers?
+        # TODO: should support check for other p3logging-supported handlers?
         # Like QueueHandler, QueueListener, etc.
         # Iterate supported file handlers, check log file access
         for name, handler in config_dict["handlers"].items():
-            # Look at p3Logging supported handlers only
+            # Look at p3logging supported handlers only
             if isinstance(handler, dict) and \
                 handler.get("class") in _SUPPORTED_LOGGING_HANDLER:
                 # Check if the filename is valid

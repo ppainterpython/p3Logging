@@ -52,7 +52,7 @@
             "name": "Py: Run as Module",
             "type": "debugpy",
             "request": "launch",
-            "module": "p3Logging.p3LogInfo",  // Specify the module to run
+            "module": "p3logging.p3LogInfo",  // Specify the module to run
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/src",  // Set the working directory to 'src'
             // "env": {

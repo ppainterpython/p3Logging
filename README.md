@@ -1,4 +1,4 @@
-# p3Logging Package
+# p3logging Package
 
 Brought to you by Paul Painter Python (3p). Created to do hands-on learning about the Python `logging` module.
 
@@ -38,5 +38,14 @@ root
   |     +- child: info
   |     |
   |     +- child: info
+
+```
+
+## Dependency Notes
+
+```python
+pip install python-dateutil
+pip install -e ../p3logging  # to install editable locally in this project
+pip install -e p3logging     # to install for use in another project
 
 ```

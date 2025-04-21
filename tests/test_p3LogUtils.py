@@ -10,7 +10,7 @@ from pathlib import Path
 import inspect, pyjson5
 
 # local libraries
-import p3Logging as p3l
+import p3logging as p3l
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals

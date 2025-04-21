@@ -10,7 +10,7 @@ from pathlib import Path
 import inspect, pyjson5
 
 # local libraries
-import p3Logging as p3l
+import p3logging as p3l
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
@@ -142,7 +142,7 @@ class TestSetupLogging:
     #region test_setup_logging_for_builting_config_files() method
     @pytest.mark.parametrize("test_input,expected", 
                             _BUILTIN_CONFIG_FILES_DICT)
-    def test_setup_logging_for_builting_config_files(self, caplog, 
+    def test_setup_logging_for_builtin_config_files(self, caplog, 
                                                      test_input, expected) -> None:
         """ Test the setup_logging() with each of the builtin logging config files. 
         
@@ -201,8 +201,8 @@ class TestSetupLogging:
     #region test_setup_logging_with_FileHandler_filenames_input() method
     def test_setup_logging_with_FileHandler_filenames_input(self):
         # Initialize the logger from a logging configuration file.
-        filenames = {"file": "logs/p3Logging-file-test.log", 
-                    "json_file": "logs/p3Logging-json_file-test.log"}
+        filenames = {"file": "logs/p3logging-file-test.log", 
+                    "json_file": "logs/p3logging-json_file-test.log"}
         config_file: str = p3l.STDOUT_FILE_LOG_CONFIG_FILE
         assert p3l.quick_logging_test(THIS_APP_NAME, config_file,filenames), \
             f"Expected quick_logging_test({config_file}) to return True"
@@ -355,7 +355,7 @@ class TestHelperFunctions:
     #region test_is_config_file_reachable() method
     @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_BOOL)
     def test_is_config_file_reachable(self, test_input, expected):
-        """ Test the p3Logging builtin log config files are reachable. """
+        """ Test the p3logging builtin log config files are reachable. """
 
         # Test the filename only input case
         assert isinstance((test_path := p3l.is_config_file_reachable(test_input)), 
@@ -380,8 +380,8 @@ class TestHelperFunctions:
             f"but got {test_path2.name}"
         # Test the relative path case
         # cwd = Path.cwd()
-        # rel_path = cwd / "src/p3Logging/p3logging_configs" / test_input
-        rel_path = "src/p3Logging/p3logging_configs/" + test_input
+        # rel_path = cwd / "src/p3logging/p3logging_configs" / test_input
+        rel_path = "src/p3logging/p3logging_configs/" + test_input
         assert isinstance((test_path2 := p3l.is_config_file_reachable(str(rel_path))), 
                         (Path, type(None))), \
             f"Expected is_config_file_reachable({str(test_path2)}) to return Path|None, " \

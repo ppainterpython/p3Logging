@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------- +
 """
-p3LogUtils.py - Utility functions for the p3Logging package.
+p3LogUtils.py - Utility functions for the p3logging package.
 These should be leaf level functions not dependent on any other p3l modules.
 """
 # Standard Module Libraries

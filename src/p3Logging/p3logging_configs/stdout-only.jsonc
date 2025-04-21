@@ -11,7 +11,7 @@
         // custom formatter to include class name in messages for when methods 
         // make logging calls.
         "module_or_class": {
-            "()": "p3Logging.p3LogFormatters.ModuleOrClassFormatter",
+            "()": "p3logging.p3LogFormatters.ModuleOrClassFormatter",
             "fmt_keys": {
                 "timestamp": "timestamp",
                 "level": "levelname",
