@@ -15,10 +15,39 @@ import p3Logging as p3l
 #region Globals
 THIS_APP_NAME = "Test_p3LogInfo"
 
+_BUILTIN_CONFIG_FILES_BOOL = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, True),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
+]
+_BUILTIN_CONFIG_FILES_DICT = [
+    (p3l.STDOUT_LOG_CONFIG_FILE, dict),
+    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, dict),
+    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, dict),
+    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, dict)
+]
+
 root_logger = logging.getLogger()
 logger = logging.getLogger(THIS_APP_NAME)
 logger.propagate = True
 #endregion Globals
+# ---------------------------------------------------------------------------- +
+#region TestShowLoggingSetup() Test Class
+class TestShowLoggingSetup:
+    """ Test class for show_logging_setup() function. """
+
+    @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_DICT)
+    def test_show_logging_setup(self, capsys, test_input, expected):
+        config_file = test_input
+        # Invoke show_logging_setup() to display the current logging setup
+        p3l.show_logging_setup(config_file)
+        captured = capsys.readouterr()
+        assert captured.out is not None, \
+            "Expected show_logging_setup() to return a non-None value"
+        assert isinstance(captured.out, str) and len(captured.out) > 0, \
+            "Expected show_logging_setup() to return a non-zero str"
+#endregion TestShowLoggingSetup() Test Class
 # ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.get_Logger_config_info() function
 # ---------------------------------------------------------------------------- +
@@ -74,7 +103,6 @@ def test_get_Logger_config_empty_string_input():
     
 #endregion test_get_Logger_config_empty_string_input() function
 # ---------------------------------------------------------------------------- +
-
 #endregion Tests for p3LogConfig.get_Logger_config_info() function
 # ---------------------------------------------------------------------------- +
 #region Tests for p3LogConfig.get_Logger_root_config_info() function
@@ -178,12 +206,6 @@ def test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE(caplog):
 #endregion test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE() function
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_cases() function
-_BUILTIN_CONFIG_FILES_BOOL = [
-    (p3l.STDOUT_LOG_CONFIG_FILE, True),
-    (p3l.STDOUT_FILE_LOG_CONFIG_FILE, True),
-    (p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE, True),
-    (p3l.QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE, True)
-]
 @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_BOOL)
 def test_quick_logging_test_cases(caplog, test_input, expected):
     with caplog.at_level(logging.DEBUG):
@@ -207,6 +229,7 @@ def test_quick_logging_test_cases(caplog, test_input, expected):
 # ---------------------------------------------------------------------------- +
 #endregion Tests for quick_logging_test() function
 # ---------------------------------------------------------------------------- +
+#region Local __main__ stand-alone
 if __name__ == "__main__":
     try:
         test_get_logger_info_one_line_STDOUT_LOG_CONFIG_FILE()
@@ -214,4 +237,5 @@ if __name__ == "__main__":
     except Exception as e:
         print(str(e))
         exit(1)
+#endregion
 # ---------------------------------------------------------------------------- +

@@ -258,6 +258,12 @@ class TestQuickLoggingTest:
             "Expected 'critical message' in log output"
         assert "division by zero" in captured.out, \
             "Expected 'division by zero' in log output"    
+        # Test with invalid app_name
+        with pytest.raises(TypeError) as excinfo:
+            p3l.quick_logging_test(None, config_file)
+        em = "Invalid app_name: type(NoneType) value = 'None'"
+        assert em in str(excinfo.value), \
+            f"Expected 'Invalid app_name: type:'<class 'NoneType'>' value = 'None'" 
     #endregion test_quick_logging_test_with_STDOUT_ONLY() method
     # ------------------------------------------------------------------------ +
     #region test_quick_logging_test_with_FORCE_EXCEPTION() method
