@@ -278,6 +278,7 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
         # Config File Prrocessing -------------------------------------------- +
         # Apply the logging configuration preserving any pytest handlers
         wrap_config_dictConfig(log_config_dict)
+        set_log_flag(LOG_FLAG_SETUP_COMPLETE, True)
 
         # Config File Postprocessing ----------------------------------------- +
         logger = logging.getLogger(logger_name)
@@ -334,7 +335,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
         exc_msg(update_FileHandler_filenames, e, print_flag=True)
         raise
 #endregion update_FileHanlder_filenams() function
-# ---------------------------------------------------------------------------- +#region start_queue() function
+# ---------------------------------------------------------------------------- +
 #region start_queue() function
 def start_queue() -> None:
     # If the queue_handler is used, start the listener thread
@@ -342,6 +343,7 @@ def start_queue() -> None:
     if start_queue and queue_handler is not None:
         queue_handler.listener.start()
 #endregion start_queue()() function
+# ---------------------------------------------------------------------------- +
 #region stop_queue() function
 def stop_queue() -> None:
     # If the queue_handler is used, start the listener thread
@@ -376,8 +378,10 @@ def get_formatter_id_by_custom_class_name(formatter:logging.Formatter) -> str:
 #endregion get_formatter_reference_by_class() function
 # ---------------------------------------------------------------------------- +
 #region quick_logging_test() function
-def quick_logging_test(logger_name:str,log_config_file:str,
-                       filenames: dict|None = None) -> bool:
+def quick_logging_test(logger_name:str,
+                       log_config_file:str,
+                       filenames: dict|None = None,
+                       reload:bool = False) -> bool:
     """Quick correctness test of the current logging setup.
     
     Args:
@@ -394,8 +398,10 @@ def quick_logging_test(logger_name:str,log_config_file:str,
         _ = check_testcase(quick_logging_test, logger_name, "RuntimeError")
         if logger_name is None or not isinstance(logger_name, str) or len(logger_name) == 0:
             raise TypeError(f"Invalid app_name: {t_of(logger_name)} {v_of(logger_name)}")
-        # Initialize the logger from a logging configuration file.
-        setup_logging(logger_name,log_config_file,filenames=filenames)
+        # Initialize the logger from a logging configuration file if 
+        # setup_complete flag is False or reload parameter is True.
+        if reload or not get_log_flag(LOG_FLAG_SETUP_COMPLETE):
+            setup_logging(logger_name,log_config_file,filenames=filenames)
         logger = logging.getLogger(logger_name)
         ancf = f"[{logger_name}({log_config_file})]"
         # Log messages at different levels
@@ -414,7 +420,7 @@ def quick_logging_test(logger_name:str,log_config_file:str,
         exc_msg(quick_logging_test, e, print_flag=True)
         raise
 #endregion quick_logging_test()
-# ---------------------------------------------------------------------------- +#region get_logger_formatters() function
+# ---------------------------------------------------------------------------- +
 #region get_Logger_config_info() function
 def get_Logger_config_info(log_configDict:dict|None = None, 
                            indent: int = 0) -> str:

@@ -207,10 +207,12 @@ class TestSetupLogging:
         filenames = {"file": "logs/p3logging-file-test.log", 
                     "json_file": "logs/p3logging-json_file-test.log"}
         config_file: str = p3l.STDOUT_FILE_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME, config_file,filenames), \
+        r : bool = True # reload flag
+        ln : str = THIS_APP_NAME # Logger Name
+        assert p3l.quick_logging_test(ln, config_file, filenames, r), \
             f"Expected quick_logging_test({config_file}) to return True"
         config_file: str = p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME, config_file,filenames), \
+        assert p3l.quick_logging_test(ln, config_file,filenames, r), \
             f"Expected quick_logging_test({config_file}) to return True"
     #endregion test_setup_logging_with_FileHandler_filenames_input() method
     # ------------------------------------------------------------------------ +
@@ -225,7 +227,8 @@ class TestQuickLoggingTest:
     def test_quick_logging_test_builtin_config_cases(self, caplog, test_input, expected) -> None:
         with caplog.at_level(logging.DEBUG):
             config_file = p3l.STDOUT_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME,test_input) == expected, \
+        ln : str = THIS_APP_NAME # Logger Name
+        assert p3l.quick_logging_test(ln,test_input,reload=True) == expected, \
             f"Expected quick_logging_test({test_input}) to return {expected}"
         assert "warning message" in caplog.text, \
             "Expected 'warning message' in log output"
@@ -246,7 +249,8 @@ class TestQuickLoggingTest:
     def test_quick_logging_test_with_STDOUT_ONLY(self, capsys):
         config_file: str = p3l.STDOUT_LOG_CONFIG_FILE
         # Apply the logging configuration from p3l.STDOUT_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME, config_file), \
+        ln : str = THIS_APP_NAME # Logger Name
+        assert p3l.quick_logging_test(ln, config_file, reload = True), \
             f"Expected quick_logging_test({config_file}) to return True"
         captured = capsys.readouterr()
         assert "warning message" in captured.out, \

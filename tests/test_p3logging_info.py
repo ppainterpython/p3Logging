@@ -189,9 +189,10 @@ def test_get_logger_info_one_line_STDOUT_LOG_CONFIG_FILE():
 # ---------------------------------------------------------------------------- +
 #region test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE() function
 def test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE(caplog):
+    ln : str = THIS_APP_NAME
     with caplog.at_level(logging.DEBUG):
         config_file = p3l.STDERR_FILE_JSON_LOG_CONFIG_FILE
-        p3l.quick_logging_test(THIS_APP_NAME,config_file)
+        p3l.quick_logging_test(ln, config_file, reload =  True)
     assert "warning message" in caplog.text, \
         "Expected 'warning message' in log output"
     assert "debug message" in caplog.text, \
@@ -210,9 +211,10 @@ def test_quick_logging_test_STDERR_FILE_JSON_LOG_CONFIG_FILE(caplog):
 #region test_quick_logging_test_cases() function
 @pytest.mark.parametrize("test_input,expected", _BUILTIN_CONFIG_FILES_BOOL)
 def test_quick_logging_test_cases(caplog, test_input, expected):
+    ln : str = THIS_APP_NAME
     with caplog.at_level(logging.DEBUG):
         config_file = p3l.STDOUT_LOG_CONFIG_FILE
-        assert p3l.quick_logging_test(THIS_APP_NAME,test_input) == expected, \
+    assert p3l.quick_logging_test(ln, test_input, reload = True) == expected, \
             f"Expected quick_logging_test({test_input}) to return {expected}"
     assert "warning message" in caplog.text, \
         "Expected 'warning message' in log output"
