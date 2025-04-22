@@ -2,6 +2,7 @@
 '''
 Constants for the P3 Logging (p3l) module.
 '''
+DEFAULT_LOGGER_NAME = "p3logging"
 DEFAULT_LOG_FILE = "p3logging.log"
 STDOUT_LOG_CONFIG_FILE = "stdout-only.jsonc"
 STDOUT_FILE_LOG_CONFIG_FILE = "stdout-file.jsonc"

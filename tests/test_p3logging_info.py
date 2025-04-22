@@ -56,7 +56,7 @@ def test_get_Logger_config_info_STDOUT_LOG_CONFIG_FILE():
     config_file: str = p3l.STDOUT_LOG_CONFIG_FILE
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    p3l.setup_logging(config_file,start_queue=False)
+    p3l.setup_logging(THIS_APP_NAME, config_file, start_queue=False)
     # Invoke get_logger_info() to display the current logging setup
     res = p3l.get_Logger_config_info(indent = 0)
     # captured = capsys.readouterr()
@@ -72,7 +72,8 @@ def test_get_Logger_config_None_input():
     config_file: str = p3l.STDOUT_LOG_CONFIG_FILE
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    log_configDict:dict = p3l.setup_logging(config_file,
+    log_configDict:dict = p3l.setup_logging(THIS_APP_NAME,
+                                            config_file,
                                             start_queue=False,
                                             validate_only=True)
     # Invoke get_logger_info() with None input value
@@ -89,7 +90,8 @@ def test_get_Logger_config_empty_string_input():
     config_file: str = p3l.STDOUT_LOG_CONFIG_FILE
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    log_configDict:dict = p3l.setup_logging(config_file,
+    log_configDict:dict = p3l.setup_logging(THIS_APP_NAME,
+                                            config_file,
                                             start_queue=False,
                                             validate_only=True)
     # Invoke get_logger_info() with None input value
@@ -113,7 +115,7 @@ def test_get_Logger_root_config_info():
     cfm = f"Config file: '{config_file}'"
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    p3l.setup_logging(config_file,start_queue=False)
+    p3l.setup_logging(THIS_APP_NAME, config_file,start_queue=False)
     # Invoke get_logger_info() to display the current logging setup
     log_config = p3l.get_configDict()
     assert log_config is not None, \
@@ -155,7 +157,7 @@ def test_get_logger_info_showall_STDOUT_LOG_CONFIG_FILE():
     cfm = f"Config file: '{config_file}'"
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    p3l.setup_logging(config_file,start_queue=False)
+    p3l.setup_logging(THIS_APP_NAME, config_file,start_queue=False)
     # Invoke get_logger_info() to display the current logging setup
     res = p3l.get_logger_info(logging.getLogger(), 0, showall=True)
     assert res is not None, \
@@ -171,7 +173,7 @@ def test_get_logger_info_one_line_STDOUT_LOG_CONFIG_FILE():
     cfm = f"Config file: '{config_file}'"
     # Initialize the logger from a logging configuration file.
     # Apply the logging configuration from config_file
-    p3l.setup_logging(config_file,start_queue=False)
+    p3l.setup_logging(THIS_APP_NAME, config_file,start_queue=False)
     # Invoke get_logger_info() to display the current logging setup
     res = p3l.get_logger_info(logging.getLogger(), 0, showall=False)
     assert res is not None, \

@@ -264,7 +264,7 @@ def show_logging_setup(config_file: str = STDOUT_LOG_CONFIG_FILE,
     """
     try:
         # Apply the logging configuration from config_file
-        setup_logging(config_file,start_queue=False)
+        setup_logging(DEFAULT_LOGGER_NAME, config_file,start_queue=False)
         
         # Invoke get_logger_info() to display the current logging setup
         root_logger = logging.getLogger()
@@ -281,7 +281,7 @@ def show_logging_setup(config_file: str = STDOUT_LOG_CONFIG_FILE,
 if __name__ == "__main__":
     try:
         # Apply the logging configuration from config_file
-        setup_logging(STDOUT_LOG_CONFIG_FILE,start_queue=False)
+        setup_logging(DEFAULT_LOGGER_NAME,STDOUT_LOG_CONFIG_FILE,start_queue=False)
         m = get_logger_info()
         print(m)
         # show_logging_setup()

@@ -157,7 +157,8 @@ class TestSetupLogging:
             expected (dict|None): The expected type of the return value.
         """
         # Test the builtin logging config files
-        assert isinstance((log_config_dict := p3l.setup_logging(test_input)), expected), \
+        ln = THIS_APP_NAME
+        assert isinstance((log_config_dict := p3l.setup_logging(ln,test_input)), expected), \
             f"Expected setup_logging({test_input}) to return type: '{expected}'"
         assert (config_file_path := p3l.get_config_path()) is not None, \
             f"Expected get_config_path() to return a Path object."
@@ -171,7 +172,7 @@ class TestSetupLogging:
         # Test with invalid config_file name
         config_file = "invalid_config_file.jsonc"
         with pytest.raises(FileNotFoundError) as excinfo:
-            p3l.setup_logging(config_file)
+            p3l.setup_logging(THIS_APP_NAME,config_file)
         assert f"Config file not found:'{config_file}'" in str(excinfo.value), \
             f"Expected setup_logging({config_file}) to return type: 'dict'"
     #endregion test_setup_logging_invalid_config_file_parameter() method
@@ -182,7 +183,7 @@ class TestSetupLogging:
         # Test with invalid config_file input type None
         config_file = None
         with pytest.raises(TypeError) as excinfo:
-            p3l.setup_logging(config_file)
+            p3l.setup_logging(THIS_APP_NAME,config_file)
         em = f"Invalid path_name: type:"
         assert em in str(excinfo.value), \
             f"Expected exception message to include: '{em}'"
@@ -194,8 +195,9 @@ class TestSetupLogging:
     def test_setup_validate_only(self, test_input, expected) -> None:
         """ Test the setup_logging() validate_only parameters. """
         # Test with invalid config_file input type None
+        ln = THIS_APP_NAME
         assert isinstance((log_config_dict := 
-                        p3l.setup_logging(test_input,validate_only=True)), expected), \
+                        p3l.setup_logging(ln, test_input,validate_only=True)), expected), \
             f"Expected setup_logging({test_input}) to return type: '{expected}'"
     #endregion test_setup_validate_only() method
     # ------------------------------------------------------------------------ +
@@ -289,8 +291,9 @@ class TestLogFlags:
     #region test_get_log_flags() method
     def test_log_flags(self):
         # Test the log flags functions: get, set, etc.
-        assert p3l.setup_logging(p3l.STDOUT_LOG_CONFIG_FILE) is not None, \
-            str(f"Expected setup_logging({p3l.STDOUT_LOG_CONFIG_FILE}) " 
+        ln = THIS_APP_NAME
+        assert p3l.setup_logging(ln, p3l.STDOUT_LOG_CONFIG_FILE) is not None, \
+            str(f"Expected setup_logging({ln,p3l.STDOUT_LOG_CONFIG_FILE}) " 
             f"to return the log_config_dict")
         assert (log_flags := p3l.get_log_flags()) is not None, \
             f"Expected get_log_flags() to return a log flag dictionary."

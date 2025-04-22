@@ -16,7 +16,7 @@ from .p3logging_constants import *
 from .p3logging_utils import fpfx, append_cause, force_exception, t_of, v_of, check_testcase
 #endregion imports
 # ---------------------------------------------------------------------------- +
-#region Globals
+#region Globals and Constants
 _PYTHON_LOGGING_HANDLERS = (
     "logging.StreamHandler",
     "logging.FileHandler",
@@ -45,7 +45,8 @@ _log_flags = {
         LOG_FLAG_PRINT_CONFIG_ERRORS: True,
         LOG_FLAG_SETUP_COMPLETE: False
 }
-#endregion Globals
+logger:logging.Logger = None
+#endregion Globals and Constants
 # ---------------------------------------------------------------------------- +
 #region get_log_flags() function
 def get_log_flags() -> dict:
@@ -223,7 +224,7 @@ def validate_config_file(config_file:str) -> dict:
 #endregion validate_config_file() function
 # ---------------------------------------------------------------------------- +
 #region setup_logging function
-def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
+def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDOUT_LOG_CONFIG_FILE,
                   start_queue:bool=True, validate_only:bool=False,
                   filenames: dict|None = None) -> dict:
     """ Process a configDict-style JSON file to validate and configure logging.
@@ -261,6 +262,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
     try:
         # Config File Preprocessing ------------------------------------------ +
         global _log_config_dict
+        global logger
         # me = fpfx(setup_logging)
         # Validate/parse the json config_file to dict
         log_config_dict = validate_config_file(config_file)
@@ -278,6 +280,7 @@ def setup_logging(config_file: str = STDOUT_LOG_CONFIG_FILE,
         wrap_config_dictConfig(log_config_dict)
 
         # Config File Postprocessing ----------------------------------------- +
+        logger = logging.getLogger(logger_name)
         # Save away the active logging config dict for later use
         _log_config_dict = log_config_dict
         # If a 'queue_handler' is used, start the listener thread
@@ -332,6 +335,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
         raise
 #endregion update_FileHanlder_filenams() function
 # ---------------------------------------------------------------------------- +#region start_queue() function
+#region start_queue() function
 def start_queue() -> None:
     # If the queue_handler is used, start the listener thread
     queue_handler = logging.getHandlerByName("queue_handler")
@@ -372,7 +376,7 @@ def get_formatter_id_by_custom_class_name(formatter:logging.Formatter) -> str:
 #endregion get_formatter_reference_by_class() function
 # ---------------------------------------------------------------------------- +
 #region quick_logging_test() function
-def quick_logging_test(app_name:str,log_config_file:str,
+def quick_logging_test(logger_name:str,log_config_file:str,
                        filenames: dict|None = None) -> bool:
     """Quick correctness test of the current logging setup.
     
@@ -387,14 +391,13 @@ def quick_logging_test(app_name:str,log_config_file:str,
     try:
         pfx = f"{fpfx(quick_logging_test)} "
         # Testcase helper
-        _ = check_testcase(quick_logging_test, app_name, "RuntimeError")
-        if app_name is None or not isinstance(app_name, str) or len(app_name) == 0:
-            raise TypeError(f"Invalid app_name: {t_of(app_name)} {v_of(app_name)}")
-        ancf = f"{app_name}({log_config_file})"
+        _ = check_testcase(quick_logging_test, logger_name, "RuntimeError")
+        if logger_name is None or not isinstance(logger_name, str) or len(logger_name) == 0:
+            raise TypeError(f"Invalid app_name: {t_of(logger_name)} {v_of(logger_name)}")
         # Initialize the logger from a logging configuration file.
-        setup_logging(log_config_file,filenames=filenames)
-        logger = logging.getLogger(ancf)
-        ancf = f"[{ancf}]"
+        setup_logging(logger_name,log_config_file,filenames=filenames)
+        logger = logging.getLogger(logger_name)
+        ancf = f"[{logger_name}({log_config_file})]"
         # Log messages at different levels
         logger.debug(f"Message 1/6 - debug message {ancf}")
         logger.info(f"Message 2/6 - info message {ancf}")

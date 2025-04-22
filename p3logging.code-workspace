@@ -25,6 +25,9 @@
         "cSpell.words": [
             "LICEN"
         ],
-        "pythonTestExplorer.testFramework": "pytest"
+        "pythonTestExplorer.testFramework": "pytest",
+        "python.analysis.exclude": [
+            "**/test_configs"
+        ]
     }
 } 
