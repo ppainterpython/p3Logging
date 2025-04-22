@@ -1,7 +1,7 @@
-""" P3 Logging Module - simple add-on features to Python's logging module. """
+""" p3logging Module - simple add-on features to Python's logging module. """
 __version__ = "0.1.0"
 __author__ = "Paul Painter"
-from .p3LogConstants import \
+from .p3logging_constants import \
     STDOUT_LOG_CONFIG_FILE, \
     STDOUT_FILE_LOG_CONFIG_FILE, \
     STDERR_FILE_JSON_LOG_CONFIG_FILE, \
@@ -13,10 +13,10 @@ from .p3LogConstants import \
     LOG_FLAG_PRINT_CONFIG_ERRORS, \
     LOG_FLAG_SETUP_COMPLETE
 
-from .p3LogUtils import is_filename_only,  \
+from .p3logging_utils import is_filename_only,  \
     append_cause, fpfx, force_exception, t_of, v_of, check_testcase
 
-from .p3LogConfig import get_configDict, get_config_path, \
+from .p3logging_config import get_configDict, get_config_path, \
     get_file_handler_property, exc_msg,  \
     setup_logging, update_FileHandler_filenames, start_queue, stop_queue, \
     get_formatter_id_by_custom_class_name, quick_logging_test, \
@@ -25,13 +25,23 @@ from .p3LogConfig import get_configDict, get_config_path, \
     get_config_path, get_log_flags, is_config_file_reachable, \
     validate_config_file, validate_dictConfig
 
-from .p3LogFormatters import JSONOutputFormatter, ModuleOrClassFormatter
+from .p3logging_formatters import JSONOutputFormatter, ModuleOrClassFormatter
 
-from .p3LogInfo import get_QueueHandler_info, get_logger_filter_info, \
+from .p3logging_info import get_QueueHandler_info, get_logger_filter_info, \
     get_logger_handler_info, get_logger_info, \
     show_logging_setup
 
 __all__ = [
+    "STDOUT_LOG_CONFIG_FILE",
+    "STDOUT_FILE_LOG_CONFIG_FILE",
+    "STDERR_FILE_JSON_LOG_CONFIG_FILE",
+    "QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE",
+    "BUILTIN_LOGGING_CONFIG_FILES",
+    "DEFAULT_LOG_FILE",
+    "FORCE_EXCEPTION",
+    "FORCE_EXCEPTION_MSG",
+    "LOG_FLAG_PRINT_CONFIG_ERRORS",
+    "LOG_FLAG_SETUP_COMPLETE",
     "check_testcase",
     "v_of",
     "t_of",
@@ -46,16 +56,6 @@ __all__ = [
     "get_config_path",
     "validate_config_file",
     "validate_dictConfig",
-    "STDOUT_LOG_CONFIG_FILE",
-    "STDOUT_FILE_LOG_CONFIG_FILE",
-    "STDERR_FILE_JSON_LOG_CONFIG_FILE",
-    "QUEUED_STDERR_FILE_JSON_LOG_CONFIG_FILE",
-    "BUILTIN_LOGGING_CONFIG_FILES",
-    "DEFAULT_LOG_FILE",
-    "FORCE_EXCEPTION",
-    "FORCE_EXCEPTION_MSG",
-    "LOG_FLAG_PRINT_CONFIG_ERRORS",
-    "LOG_FLAG_SETUP_COMPLETE",
     "is_filename_only",
     "is_config_file_reachable",
     "append_cause",

@@ -8,6 +8,7 @@ from pathlib import Path
 
 # third-party libraries
 import inspect, pyjson5
+from concurrent_log_handler import ConcurrentRotatingFileHandler
 
 # local libraries
 import p3logging as p3l

@@ -6,11 +6,14 @@ import atexit, pathlib, logging, inspect, logging.config
 from pathlib import Path
 from typing import List
 from typing import Callable as function
+
 # Python third-party libraries
 import pyjson5
+from concurrent_log_handler import ConcurrentRotatingFileHandler
+
 # Local libraries
-from .p3LogConstants import *
-from .p3LogUtils import fpfx, append_cause, force_exception, t_of, v_of, check_testcase
+from .p3logging_constants import *
+from .p3logging_utils import fpfx, append_cause, force_exception, t_of, v_of, check_testcase
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals
@@ -28,6 +31,7 @@ _PYTHON_LOGGING_HANDLERS = (
     "logging.handlers.SMTPHandler",
     "logging.handlers.NTEventLogHandler",
     "logging.handlers.SysLogHandler",
+    "concurrent_log_handler.ConcurrentRotatingFileHandler",
 )
 _SUPPORTED_LOGGING_HANDLER = (
     "logging.FileHandler", 
@@ -720,7 +724,7 @@ def exc_msg(func:function,e:Exception, print_flag:bool=False) -> str:
             if print_flag: print(m)
             return m
     except Exception as e:
-        print(f"p3LogUtils.exc_msg() Error:  {et}({str(e)})")
+        print(f"p3logging_utils.exc_msg() Error:  {et}({str(e)})")
         raise
 #endregion exc_msg() function
 # ---------------------------------------------------------------------------- +

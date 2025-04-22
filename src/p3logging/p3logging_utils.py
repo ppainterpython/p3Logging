@@ -1,6 +1,6 @@
 # ---------------------------------------------------------------------------- +
 """
-p3LogUtils.py - Utility functions for the p3logging package.
+p3logging_utils.py - Utility functions for the p3logging package.
 These should be leaf level functions not dependent on any other p3l modules.
 """
 # Standard Module Libraries
@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Callable as function
 
 # Local Modules
-from .p3LogConstants import *  
+from .p3logging_constants import *  
 
 # ---------------------------------------------------------------------------- +
 #region is_filename_only() function

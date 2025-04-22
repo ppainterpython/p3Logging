@@ -18,8 +18,8 @@ from  dateutil import tz
 import pyjson5
 
 # Local Libraries
-from .p3LogConstants import *
-from .p3LogUtils import *
+from .p3logging_constants import *
+from .p3logging_utils import *
 
 LOG_RECORD_BUILTIN_ATTRS = {
     "args",

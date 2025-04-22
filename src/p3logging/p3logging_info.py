@@ -16,10 +16,10 @@ from  dateutil import tz
 import pyjson5
 
 # Local Libraries
-# from ..p3logging import p3LogConstants, p3LogConfig, p3LogUtils as p3l
-from .p3LogConstants import *
-from .p3LogUtils import fpfx
-from .p3LogConfig import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name, exc_msg
+# from ..p3logging import p3logging_config, p3LogConfig, p3logging_utils as p3l
+from .p3logging_constants import *
+from .p3logging_utils import fpfx
+from .p3logging_config import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name, exc_msg
 #endregion module imports
 # ---------------------------------------------------------------------------- +
 #region get_QueueHandler_info() function

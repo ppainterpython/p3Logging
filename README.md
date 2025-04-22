@@ -48,7 +48,7 @@ pip install python-dateutil
 pip install -e ../p3logging  # to install editable locally in this project
 pip install -e p3logging     # to install for use in another project
 
-# to validate setup.cfg
-python -m configparser setup.cfg
+# to validate pyproject.toml
+pip check
 
 ```

@@ -13,6 +13,7 @@ cffi==1.17.1
 charset-normalizer==3.4.1
 colorama==0.4.6
 comm==0.2.2
+concurrent-log-handler==0.9.25
 contourpy==1.3.1
 coverage==7.8.0
 cycler==0.12.1
@@ -72,7 +73,7 @@ notebook_shim==0.2.4
 numpy==2.2.4
 openpyxl==3.1.5
 overrides==7.7.0
--e git+https://github.com/ppainterpython/p3logging.git@6cd2e21cafb309acc26b708362bd2dea145523ab#egg=p3logging
+-e git+https://github.com/ppainterpython/p3logging.git@9f4249745435b4a4dea6a282f57ffa3fadf97932#egg=p3logging
 packaging==24.2
 pandas==2.2.3
 pandocfilters==1.5.1
@@ -80,6 +81,7 @@ parso==0.8.4
 pillow==11.1.0
 platformdirs==4.3.7
 pluggy==1.5.0
+portalocker==3.1.1
 prometheus_client==0.21.1
 prompt_toolkit==3.0.50
 psutil==7.0.0
