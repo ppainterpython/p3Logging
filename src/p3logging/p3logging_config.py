@@ -728,10 +728,13 @@ def exc_msg(func:function,e:Exception, print_flag:bool=False) -> str:
             m = f"{fpfx(func)} {et}({str(e)})"
             if print_flag: print(m)
             return m
-        else:
-            m = f"exc_msg(): Invalid func param:'{str(func)}'  {et}({str(e)})"
-            if print_flag: print(m)
-            return m
+        elif isinstance(func, str):
+            fn = func
+        else : 
+            fn = f"Invalid func param:'{str(func)}': "
+        m = f"exc_msg(): {fn}({str(e)})"
+        if print_flag: print(m)
+        return m
     except Exception as e:
         print(f"p3logging_utils.exc_msg() Error:  {et}({str(e)})")
         raise
