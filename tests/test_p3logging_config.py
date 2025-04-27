@@ -446,29 +446,5 @@ class TestHelperFunctions:
 
     #endregion test_is_config_file_reachable_input_None() method
     # ------------------------------------------------------------------------ +
-    #region test_exc_msg() method
-    def test_exc_msg(self):
-        # Test with a valid exception
-        try:
-            raise ValueError("Test exception")
-        except Exception as e:
-            result = p3l.exc_msg(self.test_exc_msg,e)
-            assert "Test exception" in result, \
-                f"Expected 'Test exception' in {result}"
-
-        # Test with invalid function 
-        result = p3l.exc_msg(None, None)
-        em = "Invalid func param:'None'"
-        assert em in result, \
-            f"Expected 'exc_msg(): Invalid func param:'None'' but got {result}"
-
-        # Test with a forced exception
-        e = ZeroDivisionError("testcase: test_exc_msg()")
-        with pytest.raises(ZeroDivisionError) as excinfo:
-            result = p3l.exc_msg(p3u.force_exception, "test_exc_msg():")
-        exp_msg = f"testcase: Default Exception Test for func:force_exception()"
-        assert exp_msg in str(excinfo.value), \
-            f"Expected Exception msg to be '{exp_msg}' but got '{str(excinfo.value)}'"
-    #endregion test_exc_msg() method
 #endregion TestHelperFunctions() Test Class
 # ---------------------------------------------------------------------------- +

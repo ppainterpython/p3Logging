@@ -15,11 +15,12 @@ import datetime as dt
 from  dateutil import tz
 import pyjson5
 import p3_utils as p3u
+from p3_utils import fpfx, v_of, t_of
 
 # Local Libraries
-# from ..p3logging import p3logging_config, p3LogConfig, p3logging_utils as p3l
 from .p3logging_constants import *
-from .p3logging_config import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name, exc_msg
+from .p3logging_config import (
+    setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name)
 #endregion module imports
 # ---------------------------------------------------------------------------- +
 #region get_QueueHandler_info() function
@@ -50,7 +51,7 @@ def get_QueueHandler_info(handler: logging.handlers.QueueHandler,
             ret += get_logger_handler_info(lhl, indent, showall)
         return ret
     except Exception as e:
-        print(exc_msg(get_QueueHandler_info, e, print_flag=True))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         raise
 #endregion get_QueueHandler_info() function
 # ---------------------------------------------------------------------------- +
@@ -72,7 +73,7 @@ def get_logger_filter_info(filters: List) -> List[logging.Filter]:
             ...
         return filters
     except Exception as e:
-        print(exc_msg(get_logger_filter_info, e, print_flag=True))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         raise
 #endregion get_logger_filter_info() function
 # ---------------------------------------------------------------------------- +
@@ -152,7 +153,7 @@ def get_logger_handler_info(handler_param: List, indent: int = 0,
             ...
         return ret
     except Exception as e:
-        print(exc_msg(get_logger_handler_info, e, print_flag=True))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         raise
 #endregion get_logger_handler_info() function
 # ---------------------------------------------------------------------------- +
@@ -243,7 +244,7 @@ def get_logger_info(logger: logging.Logger, indent:int=0,
             print(ret)
         return ret
     except Exception as e:
-        print(exc_msg(get_logger_info, e, print_flag=True))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         raise
 #endregion get_logger_info() function
 # ---------------------------------------------------------------------------- +
@@ -273,7 +274,7 @@ def show_logging_setup(config_file: str = STDOUT_LOG_CONFIG_FILE,
         if json:
             print(pyjson5.dumps(log_config_dict, indent=4))
     except Exception as e:
-        print(exc_msg(show_logging_setup, e, print_flag=True))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         raise
 #endregion show_logging_setup() function
 # ---------------------------------------------------------------------------- +
@@ -286,7 +287,7 @@ if __name__ == "__main__":
         print(m)
         # show_logging_setup()
     except Exception as e:
-        print(str(e))
+        p3u.po(p3u.exc_msg(get_QueueHandler_info, e))
         exit(1)
 #endregion stand-alone __main_ test
 # ---------------------------------------------------------------------------- +

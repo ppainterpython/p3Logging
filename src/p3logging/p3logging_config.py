@@ -11,6 +11,7 @@ from typing import Callable as function
 import pyjson5
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 import p3_utils as p3u
+from p3_utils import fpfx, v_of, t_of
 
 # Local libraries
 from .p3logging_constants import *
@@ -197,7 +198,7 @@ def validate_dictConfig(config_dict : dict) -> bool:
     #     m = f"Error decoding config_dict input"
     #     raise RuntimeError(m) from e
     except Exception as e:
-        exc_msg(validate_config_file, e)
+        p3u.exc_msg(validate_config_file, e)
         raise
 #endregion validate_dictConfig) function
 # ---------------------------------------------------------------------------- +
@@ -219,7 +220,7 @@ def validate_config_file(config_file:str) -> dict:
             config_json = pyjson5.decode_io(f_in)
             return config_json
     except Exception as e:
-        exc_msg(validate_config_file, e)
+        p3u.exc_msg(validate_config_file, e)
         raise
 #endregion validate_config_file() function
 # ---------------------------------------------------------------------------- +
@@ -263,7 +264,6 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
         # Config File Preprocessing ------------------------------------------ +
         global _log_config_dict
         global logger
-        # me = p3u.fpfx(setup_logging)
         # Validate/parse the json config_file to dict
         log_config_dict = validate_config_file(config_file)
         # For FileHandler types, validate the filenames included in the config
@@ -292,7 +292,7 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
             atexit.register(queue_handler.listener.stop)
         return log_config_dict
     except Exception as e:
-        exc_msg(setup_logging, e, print_flag=True)
+        p3u.exc_msg(setup_logging, e)
         raise 
 #endregion setup_logging function
 # ---------------------------------------------------------------------------- +
@@ -332,7 +332,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
             for handler_id, handler_config in handlers.items()
         }
     except Exception as e:
-        exc_msg(update_FileHandler_filenames, e, print_flag=True)
+        p3u.exc_msg(update_FileHandler_filenames, e)
         raise
 #endregion update_FileHanlder_filenams() function
 # ---------------------------------------------------------------------------- +
@@ -393,11 +393,12 @@ def quick_logging_test(logger_name:str,
         bool: True if the test was successful, False otherwise.
     """
     try:
-        pfx = f"{p3u.fpfx(quick_logging_test)} "
         # Testcase helper
         _ = p3u.check_testcase(quick_logging_test, logger_name, "RuntimeError")
-        if logger_name is None or not isinstance(logger_name, str) or len(logger_name) == 0:
-            raise TypeError(f"Invalid app_name: {p3u.t_of(logger_name)} {p3u.v_of(logger_name)}")
+        if (logger_name is None or not isinstance(logger_name, str) or 
+            len(logger_name) == 0):
+            raise TypeError(f"Invalid app_name: {t_of(logger_name)} "
+                            f"{v_of(logger_name)}")
         # Initialize the logger from a logging configuration file if 
         # setup_complete flag is False or reload parameter is True.
         if reload or not get_log_flag(LOG_FLAG_SETUP_COMPLETE):
@@ -413,11 +414,11 @@ def quick_logging_test(logger_name:str,
         try:
             1 / 0
         except ZeroDivisionError as e:
-            logger.exception(f"Message 6/6 - Exception message: "
-                             f"{str(e)} {ancf}")
+            m = f"Message 6/6 - Exception message: {str(e)} {ancf}"
+            logger.exception(p3u.out_msg(quick_logging_test, m))
         return True
     except Exception as e:
-        exc_msg(quick_logging_test, e, print_flag=True)
+        p3u.exc_msg(quick_logging_test, e)
         raise
 #endregion quick_logging_test()
 # ---------------------------------------------------------------------------- +
@@ -447,7 +448,6 @@ def get_Logger_config_info(log_configDict:dict|None = None,
         t = f"type:'{type(indent).__name__}'"
         v = f"value = '{str(indent)}'"
         raise TypeError(f"Invalid indent: {t} {v}")
-    me:str = p3u.fpfx(get_Logger_config_info)
     version:int = 0
     formatters: dict = {}
     filters: dict = {}
@@ -506,7 +506,7 @@ def get_Logger_config_info(log_configDict:dict|None = None,
         m += f"root config[{root_config_info}]" if root_config_info else ""
         return m
     except Exception as e:
-        m = exc_msg(get_Logger_config_info, e, print_flag = True)
+        m = p3u.exc_msg(get_Logger_config_info, e)
         raise
 #endregion get_Logger_config_info() function
 # ---------------------------------------------------------------------------- +
@@ -539,7 +539,7 @@ def get_Logger_root_config_info(root_log_configDict:dict|None = None) -> str:
         v = f"value = '{str(root_log_configDict)}'"
         m = f"Invalid root_log_configDict: {t} {v}"
         raise TypeError(m)
-    me:str = p3u.fpfx(get_Logger_root_config_info)
+    me:str = fpfx(get_Logger_root_config_info)
     formatters: List = []
     filters: List = []
     handlers: List = []
@@ -584,7 +584,7 @@ def get_Logger_root_config_info(root_log_configDict:dict|None = None) -> str:
         m += f"loggers({logger_count}){logger_ids} ]"
         return m
     except Exception as e:
-        m = exc_msg(get_Logger_config_info, e, print_flag = True)
+        m = p3u.exc_msg(get_Logger_config_info, e,)
         raise
 #endregion get_Logger_root_config_info() function
 # ---------------------------------------------------------------------------- +
@@ -604,7 +604,7 @@ def get_logger_formatters(
         TypeError: If the handler is not a logging.Handler or a list of 
         logging.Handler objects.
     """
-    me = p3u.fpfx(get_logger_formatters)
+    me = fpfx(get_logger_formatters)
     #region param 'handler_param' type check
     raise_TypeError = False
     # Must be a single instance, list or tuple of logging.Handler objects
@@ -623,7 +623,7 @@ def get_logger_formatters(
             f"value is '{handler_param}', "
             f"expected one or List of logging.Handler objects."
         )
-        print(f"{me}{m}")
+        p3u.po(f"{me}{m}")
         raise TypeError(m)
     #endregion param 'handler_param' type check
     try:
@@ -644,7 +644,7 @@ def get_logger_formatters(
                 formatters += get_logger_formatters(hl) if hl else None
         return formatters
     except Exception as e:
-        print(exc_msg(get_logger_formatters, e, print_flag=True))
+        p3u.exc_msg(get_logger_formatters, e)
         raise
 #endregion get_logger_formatters() function
 # ---------------------------------------------------------------------------- +
@@ -674,7 +674,6 @@ def is_config_file_reachable(path_name: str) -> Path | None:
         Exception: Forwards exceptions caught from the pathlib methods.
     """
     try:
-        me = p3u.fpfx(is_config_file_reachable)
         # Check if the path is a viable str usable in a path.
         if path_name is None or not isinstance(path_name, str) or len(path_name) == 0:
             raise TypeError(f"Invalid path_name: type:'{type(path_name)}' value = '{path_name}'")
@@ -697,46 +696,7 @@ def is_config_file_reachable(path_name: str) -> Path | None:
         # If none of the checks succeed and no exception raised, return None
         return None
     except Exception as e:
-        exc_msg(is_config_file_reachable,e,print_flag=True)
+        p3u.exc_msg(is_config_file_reachable,e)
         raise
 #endregion is_config_file_reachable() function
-# ---------------------------------------------------------------------------- +
-#region exc_msg() function
-def exc_msg(func:function,e:Exception, print_flag:bool=False) -> str:
-    """
-    Common simple output message for Exceptions.
-    
-    Within a function, use to emit a message in except: blocks. Various 
-    arguments select output by console print(), logger, or both.
-    
-    Args:
-        func (function): The function where the exception occurred.
-        e (Exception): The exception object.
-        print (bool): If True, print the message to console.
-        log (logging.Logger): Logger object to log the message.
-        
-    Returns:
-        str: Returns the routine exception log message.    
-    """
-    try:
-        et = type(e).__name__
-        print_flag = get_log_flag(LOG_FLAG_PRINT_CONFIG_ERRORS)
-        if func is not None and isinstance(func, function):
-            # Helpling out the test cases only.
-            if func.__name__ == "force_exception":
-                p3u.force_exception(func)
-            m = f"{p3u.fpfx(func)} {et}({str(e)})"
-            if print_flag: print(m)
-            return m
-        elif isinstance(func, str):
-            fn = func
-        else : 
-            fn = f"Invalid func param:'{str(func)}': "
-        m = f"exc_msg(): {fn}({str(e)})"
-        if print_flag: print(m)
-        return m
-    except Exception as e:
-        print(f"p3logging_utils.exc_msg() Error:  {et}({str(e)})")
-        raise
-#endregion exc_msg() function
 # ---------------------------------------------------------------------------- +
