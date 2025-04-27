@@ -3,7 +3,7 @@ name = "p3logging"
 dynamic = ["version"]
 description = "A simple logging library for Python 3"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICEN[CS]E*"]
 [build-system]
