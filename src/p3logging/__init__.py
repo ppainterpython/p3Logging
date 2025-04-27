@@ -1,5 +1,5 @@
 """ p3logging Module - simple add-on features to Python's logging module. """
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __author__ = "Paul Painter"
 from .p3logging_constants import \
     STDOUT_LOG_CONFIG_FILE, \
@@ -13,9 +13,6 @@ from .p3logging_constants import \
     FORCE_EXCEPTION_MSG, \
     LOG_FLAG_PRINT_CONFIG_ERRORS, \
     LOG_FLAG_SETUP_COMPLETE
-
-from .p3logging_utils import is_filename_only,  \
-    append_cause, fpfx, force_exception, t_of, v_of, check_testcase
 
 from .p3logging_config import get_configDict, get_config_path, \
     get_file_handler_property, exc_msg,  \

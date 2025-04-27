@@ -11,6 +11,7 @@ import inspect, pyjson5
 from concurrent_log_handler import ConcurrentRotatingFileHandler
 
 # local libraries
+import p3_utils as p3u
 import p3logging as p3l
 #endregion imports
 # ---------------------------------------------------------------------------- +
@@ -56,8 +57,8 @@ class TestValidateDictConfig:
     # ------------------------------------------------------------------------ +
     #region test_validate_dictConfig_FORCED_EXCEPTION() method
     def test_validate_dictConfig_FORCED_EXCEPTION(self):
-        dictConfig: str = p3l.FORCE_EXCEPTION
-        # Apply the logging configuration from p3l.FORCE_EXCEPTION
+        dictConfig: str = p3u.FORCE_EXCEPTION
+        # Apply the logging configuration from p3u.FORCE_EXCEPTION
         with pytest.raises(Exception) as excinfo:
             p3l.validate_dictConfig(dictConfig)
         em = "testcase: Default Exception Test for func:validate_dictConfig()"
@@ -107,8 +108,8 @@ class TestValidateConfigFile:
     # ------------------------------------------------------------------------ +
     #region test_validate_config_file_FORCED_EXCEPTION() method
     def test_validate_config_file_FORCED_EXCEPTION(self):
-        config_file: str = p3l.FORCE_EXCEPTION
-        # Apply the logging configuration from p3l.FORCE_EXCEPTION
+        config_file: str = p3u.FORCE_EXCEPTION
+        # Apply the logging configuration from p3u.FORCE_EXCEPTION
         with pytest.raises(Exception) as excinfo:
             p3l.validate_config_file(config_file)
         em = "testcase: Default Exception Test for func:validate_config_file()"
@@ -275,10 +276,10 @@ class TestQuickLoggingTest:
     # ------------------------------------------------------------------------ +
     #region test_quick_logging_test_with_FORCE_EXCEPTION() method
     def test_quick_logging_test_with_FORCE_EXCEPTION(self):
-        config_file: str = p3l.FORCE_EXCEPTION
-        # Apply the logging configuration from p3l.FORCE_EXCEPTION
+        config_file: str = p3u.FORCE_EXCEPTION
+        # Apply the logging configuration from p3u.FORCE_EXCEPTION
         with pytest.raises(Exception) as excinfo:
-            p3l.quick_logging_test(p3l.FORCE_EXCEPTION, config_file)
+            p3l.quick_logging_test(p3u.FORCE_EXCEPTION, config_file)
         em = "testcase: RuntimeError Exception Test for func:quick_logging_test()"
         assert em in str(excinfo.value), \
             f"Expected '{em}' in exception message, " \
@@ -464,7 +465,7 @@ class TestHelperFunctions:
         # Test with a forced exception
         e = ZeroDivisionError("testcase: test_exc_msg()")
         with pytest.raises(ZeroDivisionError) as excinfo:
-            result = p3l.exc_msg(p3l.force_exception, "test_exc_msg():")
+            result = p3l.exc_msg(p3u.force_exception, "test_exc_msg():")
         exp_msg = f"testcase: Default Exception Test for func:force_exception()"
         assert exp_msg in str(excinfo.value), \
             f"Expected Exception msg to be '{exp_msg}' but got '{str(excinfo.value)}'"

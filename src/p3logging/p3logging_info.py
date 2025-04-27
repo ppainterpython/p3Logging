@@ -14,11 +14,11 @@ import datetime as dt
 # Python Third-Party Libraries
 from  dateutil import tz
 import pyjson5
+import p3_utils as p3u
 
 # Local Libraries
 # from ..p3logging import p3logging_config, p3LogConfig, p3logging_utils as p3l
 from .p3logging_constants import *
-from .p3logging_utils import fpfx
 from .p3logging_config import setup_logging, get_logger_formatters, get_formatter_id_by_custom_class_name, exc_msg
 #endregion module imports
 # ---------------------------------------------------------------------------- +
@@ -92,7 +92,7 @@ def get_logger_handler_info(handler_param: List, indent: int = 0,
         TypeError: If the handler_param is not an instance, List or tuple of
         logging.Handler objects.
     """
-    me = fpfx(get_logger_handler_info)
+    me = p3u.fpfx(get_logger_handler_info)
     global log_config_dict
 
     #region param 'handler_param' type check

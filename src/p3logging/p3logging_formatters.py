@@ -16,10 +16,10 @@ import datetime as dt
 # Python Third-Party Libraries
 from  dateutil import tz
 import pyjson5
+import p3_utils as p3u
 
 # Local Libraries
 from .p3logging_constants import *
-from .p3logging_utils import *
 
 LOG_RECORD_BUILTIN_ATTRS = {
     "args",

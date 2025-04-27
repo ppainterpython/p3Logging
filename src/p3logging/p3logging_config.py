@@ -10,10 +10,10 @@ from typing import Callable as function
 # Python third-party libraries
 import pyjson5
 from concurrent_log_handler import ConcurrentRotatingFileHandler
+import p3_utils as p3u
 
 # Local libraries
 from .p3logging_constants import *
-from .p3logging_utils import fpfx, append_cause, force_exception, t_of, v_of, check_testcase
 #endregion imports
 # ---------------------------------------------------------------------------- +
 #region Globals and Constants
@@ -154,7 +154,7 @@ def wrap_config_dictConfig(log_config):
         # Exceptions from dictConfig can be deeply nested. The issues is 
         # most likely with the configuration json itself, not the logging module.
         m = f"Error: logging.config.dictConfig() "
-        m += append_cause("", e)
+        m += p3u.append_cause("", e)
         raise RuntimeError(m) from e
 #endregion wrap_config_dictConfig() function
 # ---------------------------------------------------------------------------- +
@@ -165,7 +165,7 @@ def validate_dictConfig(config_dict : dict) -> bool:
     try:
         # Check if we are helping a testcase
         if isinstance(config_dict, str) and config_dict == "force_exception":
-            force_exception(validate_dictConfig)
+            p3u.force_exception(validate_dictConfig)
         _ = pyjson5.encode(config_dict) # validate json serializable, not output
         # TODO: should support check for other p3logging-supported handlers?
         # Like QueueHandler, QueueListener, etc.
@@ -209,7 +209,7 @@ def validate_config_file(config_file:str) -> dict:
     try:
         # For helping out the test cases only.
         if config_file == "force_exception":
-            force_exception(validate_config_file)
+            p3u.force_exception(validate_config_file)
         # Check if the config file exists, is accessible, and is valid JSON
         if (config_file_path := is_config_file_reachable(config_file)) is None:
             raise FileNotFoundError(f"Config file not found:'{config_file}'")
@@ -263,7 +263,7 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
         # Config File Preprocessing ------------------------------------------ +
         global _log_config_dict
         global logger
-        # me = fpfx(setup_logging)
+        # me = p3u.fpfx(setup_logging)
         # Validate/parse the json config_file to dict
         log_config_dict = validate_config_file(config_file)
         # For FileHandler types, validate the filenames included in the config
@@ -393,11 +393,11 @@ def quick_logging_test(logger_name:str,
         bool: True if the test was successful, False otherwise.
     """
     try:
-        pfx = f"{fpfx(quick_logging_test)} "
+        pfx = f"{p3u.fpfx(quick_logging_test)} "
         # Testcase helper
-        _ = check_testcase(quick_logging_test, logger_name, "RuntimeError")
+        _ = p3u.check_testcase(quick_logging_test, logger_name, "RuntimeError")
         if logger_name is None or not isinstance(logger_name, str) or len(logger_name) == 0:
-            raise TypeError(f"Invalid app_name: {t_of(logger_name)} {v_of(logger_name)}")
+            raise TypeError(f"Invalid app_name: {p3u.t_of(logger_name)} {p3u.v_of(logger_name)}")
         # Initialize the logger from a logging configuration file if 
         # setup_complete flag is False or reload parameter is True.
         if reload or not get_log_flag(LOG_FLAG_SETUP_COMPLETE):
@@ -447,7 +447,7 @@ def get_Logger_config_info(log_configDict:dict|None = None,
         t = f"type:'{type(indent).__name__}'"
         v = f"value = '{str(indent)}'"
         raise TypeError(f"Invalid indent: {t} {v}")
-    me:str = fpfx(get_Logger_config_info)
+    me:str = p3u.fpfx(get_Logger_config_info)
     version:int = 0
     formatters: dict = {}
     filters: dict = {}
@@ -539,7 +539,7 @@ def get_Logger_root_config_info(root_log_configDict:dict|None = None) -> str:
         v = f"value = '{str(root_log_configDict)}'"
         m = f"Invalid root_log_configDict: {t} {v}"
         raise TypeError(m)
-    me:str = fpfx(get_Logger_root_config_info)
+    me:str = p3u.fpfx(get_Logger_root_config_info)
     formatters: List = []
     filters: List = []
     handlers: List = []
@@ -604,7 +604,7 @@ def get_logger_formatters(
         TypeError: If the handler is not a logging.Handler or a list of 
         logging.Handler objects.
     """
-    me = fpfx(get_logger_formatters)
+    me = p3u.fpfx(get_logger_formatters)
     #region param 'handler_param' type check
     raise_TypeError = False
     # Must be a single instance, list or tuple of logging.Handler objects
@@ -674,7 +674,7 @@ def is_config_file_reachable(path_name: str) -> Path | None:
         Exception: Forwards exceptions caught from the pathlib methods.
     """
     try:
-        me = fpfx(is_config_file_reachable)
+        me = p3u.fpfx(is_config_file_reachable)
         # Check if the path is a viable str usable in a path.
         if path_name is None or not isinstance(path_name, str) or len(path_name) == 0:
             raise TypeError(f"Invalid path_name: type:'{type(path_name)}' value = '{path_name}'")
@@ -724,8 +724,8 @@ def exc_msg(func:function,e:Exception, print_flag:bool=False) -> str:
         if func is not None and isinstance(func, function):
             # Helpling out the test cases only.
             if func.__name__ == "force_exception":
-                force_exception(func)
-            m = f"{fpfx(func)} {et}({str(e)})"
+                p3u.force_exception(func)
+            m = f"{p3u.fpfx(func)} {et}({str(e)})"
             if print_flag: print(m)
             return m
         elif isinstance(func, str):
