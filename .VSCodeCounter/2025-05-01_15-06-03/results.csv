@@ -1,0 +1,19 @@
+"filename", "language", "Python", "JSON with Comments", "pip requirements", "Ini", "Markdown", "comment", "blank", "total"
+"c:\Users\ppain\repos\python\p3logging\LICENSE.md", "Markdown", 0, 0, 0, 0, 17, 0, 5, 22
+"c:\Users\ppain\repos\python\p3logging\README.md", "Markdown", 0, 0, 0, 0, 42, 0, 13, 55
+"c:\Users\ppain\repos\python\p3logging\p3logging.code-workspace", "JSON with Comments", 0, 33, 0, 0, 0, 0, 0, 33
+"c:\Users\ppain\repos\python\p3logging\pytest.ini", "Ini", 0, 0, 0, 14, 0, 0, 1, 15
+"c:\Users\ppain\repos\python\p3logging\requirements.txt", "pip requirements", 0, 0, 133, 0, 0, 0, 1, 134
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\__init__.py", "Python", 68, 0, 0, 0, 0, 0, 4, 72
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_config.py", "Python", 521, 0, 0, 0, 0, 140, 42, 703
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\queued-stderr-file-json.jsonc", "JSON with Comments", 0, 78, 0, 0, 0, 10, 1, 89
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stderr-file-json.jsonc", "JSON with Comments", 0, 69, 0, 0, 0, 8, 0, 77
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stdout-file.jsonc", "JSON with Comments", 0, 60, 0, 0, 0, 6, 0, 66
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stdout-only.jsonc", "JSON with Comments", 0, 38, 0, 0, 0, 4, 0, 42
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_constants.py", "Python", 19, 0, 0, 0, 0, 1, 2, 22
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_formatters.py", "Python", 123, 0, 0, 0, 0, 32, 16, 171
+"c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_info.py", "Python", 222, 0, 0, 0, 0, 54, 18, 294
+"c:\Users\ppain\repos\python\p3logging\tests\test_configs\invalid-json.jsonc", "JSON with Comments", 0, 39, 0, 0, 0, 4, 0, 43
+"c:\Users\ppain\repos\python\p3logging\tests\test_p3logging_config.py", "Python", 312, 0, 0, 0, 0, 130, 9, 451
+"c:\Users\ppain\repos\python\p3logging\tests\test_p3logging_info.py", "Python", 151, 0, 0, 0, 0, 84, 11, 246
+"Total", "-", 1416, 317, 133, 14, 59, 473, 123, 2535

@@ -1,0 +1,53 @@
+Date : 2025-05-01 15:06:03
+Directory : c:\Users\ppain\repos\python\p3logging
+Total : 17 files,  1939 codes, 473 comments, 123 blanks, all 2535 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| Python             |          7 |      1,416 |        441 |        102 |      1,959 |
+| JSON with Comments |          6 |        317 |         32 |          1 |        350 |
+| pip requirements   |          1 |        133 |          0 |          1 |        134 |
+| Markdown           |          2 |         59 |          0 |         18 |         77 |
+| Ini                |          1 |         14 |          0 |          1 |         15 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                   |         17 |      1,939 |        473 |        123 |      2,535 |
+| . (Files)                                                                                           |          5 |        239 |          0 |         20 |        259 |
+| src                                                                                                 |          9 |      1,198 |        255 |         83 |      1,536 |
+| src\p3logging                                                                                       |          9 |      1,198 |        255 |         83 |      1,536 |
+| src\p3logging (Files)                                                                               |          5 |        953 |        227 |         82 |      1,262 |
+| src\p3logging\p3logging_configs                                                                     |          4 |        245 |         28 |          1 |        274 |
+| tests                                                                                               |          3 |        502 |        218 |         20 |        740 |
+| tests (Files)                                                                                       |          2 |        463 |        214 |         20 |        697 |
+| tests\test_configs                                                                                  |          1 |         39 |          4 |          0 |         43 |
++-----------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                                                            | language           | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\ppain\repos\python\p3logging\LICENSE.md                                                    | Markdown           |         17 |          0 |          5 |         22 |
+| c:\Users\ppain\repos\python\p3logging\README.md                                                     | Markdown           |         42 |          0 |         13 |         55 |
+| c:\Users\ppain\repos\python\p3logging\p3logging.code-workspace                                      | JSON with Comments |         33 |          0 |          0 |         33 |
+| c:\Users\ppain\repos\python\p3logging\pytest.ini                                                    | Ini                |         14 |          0 |          1 |         15 |
+| c:\Users\ppain\repos\python\p3logging\requirements.txt                                              | pip requirements   |        133 |          0 |          1 |        134 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\__init__.py                                     | Python             |         68 |          0 |          4 |         72 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_config.py                             | Python             |        521 |        140 |         42 |        703 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\queued-stderr-file-json.jsonc | JSON with Comments |         78 |         10 |          1 |         89 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stderr-file-json.jsonc        | JSON with Comments |         69 |          8 |          0 |         77 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stdout-file.jsonc             | JSON with Comments |         60 |          6 |          0 |         66 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_configs\stdout-only.jsonc             | JSON with Comments |         38 |          4 |          0 |         42 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_constants.py                          | Python             |         19 |          1 |          2 |         22 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_formatters.py                         | Python             |        123 |         32 |         16 |        171 |
+| c:\Users\ppain\repos\python\p3logging\src\p3logging\p3logging_info.py                               | Python             |        222 |         54 |         18 |        294 |
+| c:\Users\ppain\repos\python\p3logging\tests\test_configs\invalid-json.jsonc                         | JSON with Comments |         39 |          4 |          0 |         43 |
+| c:\Users\ppain\repos\python\p3logging\tests\test_p3logging_config.py                                | Python             |        312 |        130 |          9 |        451 |
+| c:\Users\ppain\repos\python\p3logging\tests\test_p3logging_info.py                                  | Python             |        151 |         84 |         11 |        246 |
+| Total                                                                                               |                    |      1,939 |        473 |        123 |      2,535 |
++-----------------------------------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

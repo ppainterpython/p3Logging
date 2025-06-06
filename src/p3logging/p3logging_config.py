@@ -190,13 +190,6 @@ def validate_dictConfig(config_dict : dict) -> bool:
                         raise RuntimeError(
                             f"Cannot write to log file: {file_path}") from e
         return True
-    # except TypeError as e:
-    #     t = type(config_dict).__name__
-    #     m = f"Error decoding config_dict: '{config_dict} as type: '{t}'"
-    #     raise RuntimeError(m) from e
-    # except (pyjson5.JSONDecodeError, Exception) as e:
-    #     m = f"Error decoding config_dict input"
-    #     raise RuntimeError(m) from e
     except Exception as e:
         p3u.exc_msg(validate_config_file, e)
         raise
@@ -245,7 +238,7 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
             config_dict without applying it.
         filenames (dict):
             A dictionary of filename values by FileHandler Id keys. If
-            a FileHander with the given Id is found in the config file, 
+            a FileHandler with the given Id is found in the config file, 
             use the corresponding filename value from the filenames 
             dictionary, overriding the filename entry in the config.
             Use value of None to apply the filename from the config file.
@@ -296,12 +289,12 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
         raise 
 #endregion setup_logging function
 # ---------------------------------------------------------------------------- +
-#region update_FileHanlder_filenams() function
+#region update_FileHandler_filenames() function
 def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:  
     """Update the filenames in the config_dict for FileHandler instances.
     
     Apply a set of filename mapping values to any FileHandler instances 
-    in the provided confic_dict. The mapping is a dictionary of
+    in the provided config_dict. The mapping is a dictionary of
     FileHandler Id keys to filename values. The filename values are
     used to update the filename property of the FileHandler instances
     in the config_dict. The mapping is applied to the config_dict,
@@ -334,7 +327,7 @@ def update_FileHandler_filenames(config_dict:dict, filenames:dict) -> None:
     except Exception as e:
         p3u.exc_msg(update_FileHandler_filenames, e)
         raise
-#endregion update_FileHanlder_filenams() function
+#endregion update_FileHandler_filenames() function
 # ---------------------------------------------------------------------------- +
 #region start_queue() function
 def start_queue() -> None:
