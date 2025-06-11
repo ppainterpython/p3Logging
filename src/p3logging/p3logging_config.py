@@ -268,7 +268,7 @@ def setup_logging(logger_name:str = DEFAULT_LOGGER_NAME, config_file: str = STDO
         if valid_config_file and validate_only:
             return log_config_dict
         
-        # Config File Prrocessing -------------------------------------------- +
+        # Config File Processing -------------------------------------------- +
         # Apply the logging configuration preserving any pytest handlers
         wrap_config_dictConfig(log_config_dict)
         set_log_flag(LOG_FLAG_SETUP_COMPLETE, True)
@@ -599,18 +599,18 @@ def get_logger_formatters(
     """
     me = fpfx(get_logger_formatters)
     #region param 'handler_param' type check
-    raise_TypeError = False
+    raise_error = False
     # Must be a single instance, list or tuple of logging.Handler objects
     # After validation, handlers will be a List of one or more logging.Handler
     # objects.
-    if handler_param is None:raise_TypeError = True
+    if handler_param is None:raise_error = True
     elif isinstance(handler_param, logging.Handler): handlers = [handler_param]
     elif ((isinstance(handler_param, List) or isinstance(handler_param, tuple)) 
         and all(isinstance(obj, logging.Handler) for obj in handler_param)):
         handlers = handler_param
     else:
-        raise_TypeError = True
-    if raise_TypeError:
+        raise_error = True
+    if raise_error:
         m = str(
             f"param 'handler_param' is type:'{type(handler_param).__name__}', "
             f"value is '{handler_param}', "

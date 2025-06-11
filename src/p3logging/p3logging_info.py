@@ -97,18 +97,18 @@ def get_logger_handler_info(handler_param: List, indent: int = 0,
     global log_config_dict
 
     #region param 'handler_param' type check
-    raise_TypeError = False
+    raise_error = False
     # Must be a single instance, list or tuple of logging.Handler objects
     # After validation, handlers will be a List of one or more logging.Handler
     # objects.
-    if handler_param is None:raise_TypeError = True
+    if handler_param is None:raise_error = True
     elif isinstance(handler_param, logging.Handler): handlers = [handler_param]
     elif ((isinstance(handler_param, List) or isinstance(handler_param, tuple)) 
         and all(isinstance(obj, logging.Handler) for obj in handler_param)):
         handlers = handler_param
     else:
-        raise_TypeError = True
-    if raise_TypeError:
+        raise_error = True
+    if raise_error:
         m = str(
             f"param 'handler_param' is type:'{type(handler_param).__name__}', "
             f"value is '{handler_param}', "
