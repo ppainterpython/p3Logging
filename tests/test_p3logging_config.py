@@ -141,7 +141,7 @@ class TestSetupLogging:
             f"Expected Path object, but got {type(p3l.get_config_path())}"
     #endregion test_setup_logging_simple() method
     # ------------------------------------------------------------------------ +
-    #region test_setup_logging_for_builting_config_files() method
+    #region test_setup_logging_for_builtin_config_files() method
     @pytest.mark.parametrize("test_input,expected", 
                             _BUILTIN_CONFIG_FILES_DICT)
     def test_setup_logging_for_builtin_config_files(self, caplog, 
@@ -165,7 +165,7 @@ class TestSetupLogging:
             f"Expected get_config_path() to return a Path object."
         assert isinstance(config_file_path, Path), \
             f"Expected Path object, but got {type(config_file_path)}"
-    #endregion test_setup_logging_for_builting_config_files() method
+    #endregion test_setup_logging_for_builtin_config_files() method
     # ------------------------------------------------------------------------ +
     #region test_setup_logging_invalid_config_file_parameter() method
     def test_setup_logging_invalid_config_file_parameter(self) -> None:
